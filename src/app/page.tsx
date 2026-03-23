@@ -5,20 +5,20 @@ import { auth, signIn } from "@/lib/auth";
 import { NeonButton } from "@/components/ui/neon-button";
 import { redirect } from "next/navigation";
 
-const HERO_ASCII = `
-╔══════════════════════════════════════════════════════════════╗
-║                                                              ║
-║  ███╗   ███╗██╗██╗  ██╗ ██████╗ ███████╗██╗  ██╗██╗         ║
-║  ████╗ ████║██║██║ ██╔╝██╔═══██╗██╔════╝██║  ██║██║         ║
-║  ██╔████╔██║██║█████╔╝ ██║   ██║███████╗███████║██║         ║
-║  ██║╚██╔╝██║██║██╔═██╗ ██║   ██║╚════██║██╔══██║██║         ║
-║  ██║ ╚═╝ ██║██║██║  ██╗╚██████╔╝███████║██║  ██║██║         ║
-║  ╚═╝     ╚═╝╚═╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝╚═╝         ║
-║                                                              ║
-║            CLOUD DATA FORTRESS v0.1.0                        ║
-║            Engram Storage & Sharing Hub                      ║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝`.trim();
+const HERO_LOGO = [
+  "    __  ___ ____ __ __ ____  _____ __ __ ____",
+  "   /  |/  //  _// //_// __ \\/ ___// // //  _/",
+  "  / /|_/ / / / / ,<  / / / /\\__ \\/ _  / / /  ",
+  " / /  / /_/ / / /| |/ /_/ /___/ / / / /_/ /  ",
+  "/_/  /_//___//_/ |_|\\____//____/_/ /_//___/  ",
+].join("\n");
+
+const HERO_SUB = [
+  "",
+  "       CLOUD DATA FORTRESS v0.1.0",
+  "       Engram Storage & Sharing Hub",
+  "",
+].join("\n");
 
 export default async function Home() {
   const session = await auth();
@@ -31,8 +31,11 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 flex flex-col items-center justify-center px-4 scanlines">
-        <pre className="text-neon-cyan glow-cyan text-[6px] sm:text-[8px] md:text-xs leading-tight mb-8 select-none text-center overflow-x-auto max-w-full">
-          {HERO_ASCII}
+        <pre className="text-neon-cyan glow-cyan text-xs sm:text-sm md:text-base leading-tight mb-8 select-none overflow-x-auto max-w-full">
+          {HERO_LOGO}
+        </pre>
+        <pre className="text-muted-foreground text-xs sm:text-sm leading-relaxed mb-8 select-none">
+          {HERO_SUB}
         </pre>
 
         <div className="max-w-xl w-full space-y-6">

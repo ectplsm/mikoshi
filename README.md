@@ -5,8 +5,8 @@
  / /  / /_/ / / /| |/ /_/ /___/ / // /_/ /
 /_/  /_//___//_/ |_|\____//____/_//_//___/
 
-           CLOUD DATA FORTRESS
-           Engram Storage & Sharing Hub
+CLOUD DATA FORTRESS
+Engram Storage & Sharing Hub
 ```
 
 **Mikoshi** is a cloud fortress for storing, sharing, and managing AI persona data (**Engrams**).

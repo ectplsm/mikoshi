@@ -15,8 +15,8 @@ const HERO_LOGO = [
 
 const HERO_SUB = [
   "",
-  "     CLOUD DATA FORTRESS",
-  "     Engram Storage & Sharing Hub",
+  "    CLOUD DATA FORTRESS",
+  "Engram Storage & Sharing Hub",
   "",
 ].join("\n");
 

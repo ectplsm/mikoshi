@@ -57,6 +57,8 @@
 
 /* Dark-only theme — Mikoshi is always dark */
 :root {
+  --font-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-geist-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
   --background: oklch(0.09 0.005 270);
   --foreground: oklch(0.9 0 0);
   --card: oklch(0.12 0.008 270);

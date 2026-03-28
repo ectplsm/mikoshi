@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { TerminalCard } from "@/components/ui/terminal-card";
 import { VisibilityBadge } from "@/components/ui/visibility-badge";
@@ -32,10 +33,13 @@ export function EngramCard({
         <div className="space-y-3">
           <div className="flex items-start gap-3">
             {avatarUrl && (
-              <img
+              <Image
                 src={avatarUrl}
                 alt=""
                 className="w-10 h-10 rounded-sm border border-border object-cover"
+                width={40}
+                height={40}
+                unoptimized
               />
             )}
             <div className="flex-1 min-w-0">

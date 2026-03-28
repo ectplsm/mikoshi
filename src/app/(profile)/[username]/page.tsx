@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { Header } from "@/components/layout/header";
@@ -31,10 +32,13 @@ export default async function ProfilePage({ params }: PageProps) {
         <TerminalCard title={`user.profile @${user.username}`} variant="cyan">
           <div className="flex items-center gap-4">
             {user.image && (
-              <img
+              <Image
                 src={user.image}
                 alt=""
                 className="w-16 h-16 rounded-sm border border-border object-cover"
+                width={64}
+                height={64}
+                unoptimized
               />
             )}
             <div>

@@ -11,7 +11,6 @@ const FILENAME_TO_TYPE: Record<string, FileType> = {
   "HEARTBEAT.md": FileType.HEARTBEAT,
 };
 
-const MEMORY_DIR_PREFIX = "memory/";
 const MEMORY_ENTRY_PATTERN = /^memory\/\d{4}-\d{2}-\d{2}\.md$/;
 
 const IMAGE_EXTENSIONS = new Set([

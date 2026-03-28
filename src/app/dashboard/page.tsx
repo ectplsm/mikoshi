@@ -22,7 +22,7 @@ export default async function DashboardPage() {
           <span className="text-neon-cyan">&gt;</span>
           <h1 className="text-xl font-bold">Dashboard</h1>
           <span className="text-muted-foreground text-sm">
-            // {engrams.length} engram{engrams.length !== 1 ? "s" : ""}
+            {"//"} {engrams.length} engram{engrams.length !== 1 ? "s" : ""}
           </span>
         </div>
 

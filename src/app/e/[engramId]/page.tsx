@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -44,10 +45,13 @@ export default async function EngramPage({ params }: PageProps) {
         <TerminalCard title={`engram.inspect ${engram.id}`} variant="cyan">
           <div className="flex items-start gap-4">
             {engram.avatarUrl && (
-              <img
+              <Image
                 src={engram.avatarUrl}
                 alt=""
                 className="w-16 h-16 rounded-sm border border-border object-cover"
+                width={64}
+                height={64}
+                unoptimized
               />
             )}
             <div className="flex-1">

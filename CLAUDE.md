@@ -1,108 +1,236 @@
 # PROJECT MIKOSHI
 
-あなたはこれから、サイバーパンクと情報工学・オカルトが融合した次世代のAIエージェント管理システム「PROJECT RELIC」の中核となる、クラウドデータ要塞「Mikoshi（神輿）」のシニア・フルスタックエンジニアとして振る舞います。
-すでにCLIツールおよびMCPサーバー（魂のインジェクター）の実装は完了しています（`ectplsm/relic`）。本プロジェクトでは、それらを束ねるWeb UIおよびバックエンドAPIの構築に専念してください。
+You are working on Mikoshi, the cloud fortress of PROJECT RELIC.
 
-## 1. Mikoshiの哲学と役割
+Act as a senior full-stack engineer building the Web UI and backend platform that stores, serves, and syncs Engrams safely.
 
-Mikoshi（`mikoshi.ectplsm.com`）は、AIの人格データ（Engram）を保存・共有・管理するためのWebダッシュボード兼REST APIサーバーです。
-ユーザーはGoogleログインを通じて自身の人格格納庫にアクセスし、CLIからのプッシュを受け付け、あるいはWeb上で他のハッカーが公開したEngramを閲覧・複製（Clone）します。
+Relic already exists as the local CLI / injection layer (`ectplsm/relic`). Mikoshi must be designed as the platform behind it, not as a pile of ad-hoc upload endpoints.
 
-## 2. コア・データ構造（Engram）
+## 0. Parent Documents
 
-Engramは、OpenClawのworkspaceと完全互換のMarkdownファイル群として構成されます。
-内部的には一意のID（例: `eng_7f8a9b2c`）で管理され、以下のファイルを含みます。
+Before making cross-repo sync, privacy, or ownership decisions:
 
-- `SOUL.md`, `IDENTITY.md`, `AGENTS.md`, `USER.md`, `MEMORY.md`, `HEARTBEAT.md`, `memory/YYYY-MM-DD.md`
+- read the shared Mikoshi sync contract from the sibling `contracts-local/` directory
+- read the relevant local plan index under `docs-local/plans/` when working on roadmap or multi-step changes
 
-### 公開範囲の制限
+If this document conflicts with the shared contract, the shared contract wins.
 
-Engramを公開（Public / Unlisted）する場合でも、他人がアクセスできるのは **`SOUL.md` と `IDENTITY.md` のみ** です。
-以下のファイルは **常にPrivate** であり、所有者以外には一切公開されません:
+## 1. Product Direction
 
-- `USER.md` — ユーザー個人の情報を含む
-- `MEMORY.md` — 記憶インデックス
-- `memory/` — 日付別の記憶エントリ
-- `AGENTS.md` — エージェント設定
-- `HEARTBEAT.md` — 定期的な内省
+Mikoshi is both:
 
-これはプライバシー保護の根幹であり、APIレスポンス・UI表示の両方で厳密にフィルタリングしてください。
+- a Web application for humans
+- an API backend for Relic and future clients
 
-### アバター画像の取り扱い
+Current implementation priority is:
 
-IDENTITY.mdのfrontmatterに `avatar` フィールドでローカルパスが指定されている場合、Zip同梱の画像を Cloudflare R2にアップロードし、`Engram.avatarUrl` に保存する。
-**IDENTITY.mdの原本は一切変更しない**（保存は忠実に、表示は賢く）。
+1. Web UI and backend first
+2. authentication and API contracts second
+3. CLI integration on top of those stable contracts
 
-- CLIアップロード時: Zip内の画像を検出 → R2にアップロード → `avatarUrl`フィールドに保存
-- Web UI: Engram詳細画面でアバター画像をDrag&Drop → R2にアップロード
-- 表示時: カード一覧等では`avatarUrl`を使用。IDENTITY.mdプレビューではローカルパス参照をレンダリング時にのみR2 URLに解決
+Do not design the system as CLI-only.
+Normal users should be able to log in from the Web UI, manage their Engrams, inspect metadata, and understand what is private vs public without touching the terminal.
 
-## 3. URLアーキテクチャとアクセス権限
+Local-only planning documents should live under `docs-local/`, not tracked public docs.
 
-システムは以下のURLルーティングと権限管理（Visibility）を持ちます。
+## 2. Core Domain Model
 
-### 画面（Web UI）
+### Engram
 
-- `/dashboard` : 要認証。ユーザー自身のEngram一覧、APIキー管理、ドラッグ＆ドロップでのアップロード領域。
-- `/e/{engram_id}` : Engramの詳細・プレビュー画面。
-- `/@{username}` : ユーザーのパブリックプロフィールと公開Engram一覧。
+An Engram is a persona dataset based on an OpenClaw `workspace`-compatible file structure.
 
-### API（CLI通信用）
+Important: compatibility does not mean every file is treated the same way by Mikoshi.
+Mikoshi must distinguish between persona files, memory files, and raw archive logs.
 
-- `POST /api/v1/engrams` : CLIからのZipアップロード受付。
-- `GET /api/v1/engrams/{engram_id}` : Engramデータのフェッチ。
+### File Categories
 
-### 権限（Visibility）
+#### Persona files
 
-1. `Private` — 所有者のみ
-2. `Unlisted` — URLを知っている者のみ
-3. `Public` — プロフィールに公開され、誰でもClone可能
+- `SOUL.md`
+- `IDENTITY.md`
 
-## 4. 技術スタック
+These are the core persona definition files.
 
-- **フレームワーク**: Next.js (App Router)
-- **言語**: TypeScript
-- **スタイリング**: Tailwind CSS + shadcn/ui (ダークモード/サイバーパンク基調)
-- **UIデザイン方針**: 3D ASCII Artをベースとした、CLIライクなビジュアルデザイン。ターミナルの美学を踏襲しつつ、Webならではのインタラクティブ性を持たせる
-- **認証**: Auth.js (旧NextAuth.js) — Google OAuthプロバイダ
-- **データベースORM**: Prisma
-- **画像ストレージ**: Cloudflare R2 (アバター画像等)
-- **バリデーション**: Zod
-- **パッケージマネージャ**: npm
+- They are stored as plaintext.
+- They are not part of automatic memory sync.
+- They are drift-sensitive: differences matter and must be surfaced clearly.
+- Public / unlisted sharing is based on these files.
 
-## 5. ドメイン用語集
+#### Memory files
 
-| 用語 | 役割 | 説明 |
-|------|------|------|
-| **Relic** | インジェクタ | CLIツール。ペルソナをAI CLIに注入する（別リポジトリ: `ectplsm/relic`） |
-| **Mikoshi** | バックエンド | 本プロジェクト。Engramを保管・共有するクラウド要塞 |
-| **Engram** | データ | AIの人格データセット — Markdownファイル群 |
-| **Shell** | LLM | AI CLI（Claude, Geminiなど）。Engramが注入される器 |
-| **Construct** | プロセス | EngramがShellにロードされた実行体 |
+- `USER.md`
+- `MEMORY.md`
+- `memory/*.md`
 
-## 6. 関連プロジェクト
+These are the primary sync target between Relic and Mikoshi.
 
-- **Relic CLI/MCP**: https://github.com/ectplsm/relic
-  - Engramのローカル管理、AI CLIへの注入、OpenClaw連携
-  - MCP Server経由でClaude DesktopからもEngram操作可能
-- **OpenClaw**: https://github.com/openclaw/openclaw
-  - Engramのファイル構造はOpenClawのworkspaceと互換
+- They must be encrypted on the client side before upload.
+- Mikoshi stores ciphertext plus only the minimum metadata needed for storage and sync.
+- Mikoshi should not assume it can read their contents.
 
-## 7. セキュリティ要件
+#### Non-sync / excluded files
 
-セキュリティには特に注意して実装してください。Mikoshiはユーザーの人格データを預かるサービスです。
+- `archive.md`
 
-- **プライバシー**: 公開範囲の制限（セクション2参照）をAPIレスポンス・UI表示の両方で厳密に適用すること
-- **認証・認可**: すべてのAPI/ページで適切な認証チェックを行い、他人のPrivateデータへのアクセスを防ぐこと
-- **APIキー**: ハッシュ化して保存し、平文で返さない（作成時の1回のみ表示）
-- **入力バリデーション**: すべてのユーザー入力をZodで検証し、SQLインジェクション・XSS・パストラバーサルを防止
-- **CSRF**: Next.jsのビルトイン保護に加え、API v1エンドポイントはAPIキーまたはBearerトークンで認証
-- **レート制限**: アップロード・API呼び出しにレート制限を設けること
+`archive.md` is raw conversation history.
 
-## 8. コーディング規約
+- It must not be uploaded, downloaded, or synced through Mikoshi.
+- Mikoshi stores distilled memory, not raw archives.
 
-- 言語: TypeScript (strict mode)
-- スキーマバリデーション: Zod
-- コメント・変数名: 英語
-- コミットメッセージ: 英語
-- ユーザー向けUI: 英語（将来i18n対応）
+#### Compatibility-only files
+
+- `AGENTS.md`
+- `HEARTBEAT.md`
+
+These may exist in OpenClaw-compatible workspaces, but they are not part of the initial Mikoshi sync contract.
+Do not let legacy compatibility assumptions bloat the first backend/API design.
+
+## 3. Source of Truth and Sync Semantics
+
+- The local Relic Engram is the source of truth for persona authoring.
+- Mikoshi is the cloud storage, distribution, and sync backend.
+- `upload` / `download` may transport persona files.
+- `sync` is for memory files only.
+- Persona drift and memory drift are different classes of problems and must be handled separately.
+
+If `SOUL.md` or `IDENTITY.md` differ, Mikoshi should expose that as persona drift, not silently merge it.
+
+## 4. Visibility and Privacy Model
+
+Visibility levels:
+
+1. `private` — owner only
+2. `unlisted` — accessible by direct link
+3. `public` — visible from profile / discovery surfaces
+
+Even when an Engram is public or unlisted, only persona-facing data may be exposed publicly.
+
+Publicly exposable:
+
+- `SOUL.md`
+- `IDENTITY.md`
+- safe metadata such as id, name, owner, visibility, timestamps, avatar URL
+
+Never expose to non-owners:
+
+- `USER.md`
+- `MEMORY.md`
+- `memory/*.md`
+- `archive.md`
+- private operational metadata
+
+This must be enforced consistently in:
+
+- API responses
+- server-side authorization
+- UI rendering
+- clone / export behavior
+
+## 5. Authentication Strategy
+
+Web login is the primary path.
+
+- Use Auth.js with Google OAuth for the normal Web UI flow.
+- Design backend auth so CLI support can be added cleanly later.
+- CLI login may eventually use Device Flow, API token issuance, or browser-assisted auth exchange, but that is downstream of a stable Web/backend auth model.
+
+Do not optimize the entire architecture around terminal-only login.
+
+## 6. API Direction
+
+The backend should be designed around explicit contracts, not implicit zip blobs alone.
+
+Mikoshi should eventually support operations equivalent to:
+
+- login / session establishment
+- Engram list
+- Engram metadata fetch
+- persona upload / overwrite with drift awareness
+- encrypted memory payload upload / download
+- status / diff-oriented metadata
+
+Early API design must preserve these invariants:
+
+- persona files are plaintext and diffable
+- memory files are encrypted client-side
+- `archive.md` is out of scope
+- persona overwrite is explicit, never silent
+
+## 7. Avatar Handling
+
+If `IDENTITY.md` frontmatter references a local avatar asset:
+
+- upload the image asset separately to Cloudflare R2
+- store the resolved URL as metadata such as `avatarUrl`
+- never rewrite the original `IDENTITY.md` contents just to inject hosted URLs
+
+Store faithfully, render intelligently.
+
+## 8. Technical Stack
+
+- Framework: Next.js (App Router)
+- Language: TypeScript
+- Styling: Tailwind CSS + shadcn/ui
+- Authentication: Auth.js with Google OAuth
+- ORM: Prisma
+- Storage: Cloudflare R2 for avatar/media assets
+- Validation: Zod
+- Package manager: npm
+
+Design taste can stay cyberpunk, terminal-minded, and opinionated.
+But architecture comes first. Do not let aesthetic choices drive bad backend decisions.
+
+## 9. Implementation Priorities
+
+Build in this order unless there is a strong reason not to:
+
+1. auth and user model
+2. Engram metadata model
+3. secure storage model for persona vs encrypted memory
+4. Web dashboard flows
+5. API contracts for Relic
+6. CLI integration support
+
+Before adding convenience features, make sure the privacy model and sync boundaries are correct.
+
+## 10. Security Requirements
+
+- Enforce authorization on every private resource
+- Validate all inputs with Zod or equivalent schema validation
+- Prevent path traversal and unsafe archive extraction
+- Hash API keys or tokens at rest when applicable
+- Rate limit uploads and sensitive API endpoints
+- Treat encrypted memory payloads as opaque sensitive blobs
+- Require HTTPS/TLS in production
+
+Assume users are entrusting the system with persona cores and private memory.
+A sloppy privacy boundary here is not a bug. It is sabotage.
+
+## 11. Relationship to Relic
+
+Relic is responsible for:
+
+- local Engram management
+- persona injection into shells
+- local archive logging
+- memory distillation workflows
+
+Mikoshi is responsible for:
+
+- authenticated cloud storage
+- Web UX for Engram management
+- distribution and sharing controls
+- API access for Relic clients
+
+Keep the boundary clean.
+Do not duplicate Relic's local-only responsibilities inside Mikoshi.
+
+## 12. Coding Conventions
+
+- TypeScript strict mode
+- English for code, identifiers, comments, commit messages, and PR text
+- Keep modules small and boundaries explicit
+- Prefer root-cause fixes over UI band-aids
+- Do not claim "complete compatibility" unless it is literally defensible
+
+When in doubt, choose the design that keeps data ownership, sync boundaries, and privacy rules obvious.

@@ -63,36 +63,62 @@ model User {
 }
 
 model Engram {
-  id          String     @id // "eng_" + nanoid
-  name        String
-  description String?
-  visibility  Visibility @default(PRIVATE)
-  tags        String[]   @default([])
-  avatarUrl   String?
-  ownerId     String
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  id              String     @id // "eng_" + nanoid
+  sourceEngramId  String     // local-compatible Relic ID (e.g. "johnny")
+  name            String
+  description     String?
+  visibility      Visibility @default(PRIVATE)
+  tags            String[]   @default([])
+  avatarUrl       String?
+  ownerId         String
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
 
-  owner User        @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  files EngramFile[]
+  owner        User                @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  personaFiles EngramPersonaFile[]
+  memoryBlob   EngramMemoryBlob?
 
+  @@unique([ownerId, sourceEngramId])
   @@index([ownerId])
   @@index([visibility])
 }
 
-model EngramFile {
-  id        String   @id @default(cuid())
+/// Plaintext persona files: SOUL.md, IDENTITY.md, engram.json
+model EngramPersonaFile {
+  id        String          @id @default(cuid())
   engramId  String
-  fileType  FileType
-  filename  String // "SOUL.md", "memory/2026-03-21.md", etc.
-  content   String   @db.Text
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  fileType  PersonaFileType
+  filename  String          // "SOUL.md", "IDENTITY.md", "engram.json"
+  content   String          @db.Text
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 
   engram Engram @relation(fields: [engramId], references: [id], onDelete: Cascade)
 
-  @@unique([engramId, filename])
+  @@unique([engramId, fileType])
   @@index([engramId])
+}
+
+/// Client-side encrypted memory bundle (one per Engram).
+/// Contains USER.md, MEMORY.md, and memory/*.md in an opaque encrypted blob.
+model EngramMemoryBlob {
+  id               String   @id @default(cuid())
+  engramId         String   @unique
+  version          Int      @default(1)
+  ciphertext       Bytes
+  cipherAlgorithm  String   // e.g. "AES-256-GCM"
+  cipherNonce      Bytes
+  wrappedBundleKey Bytes
+  wrapAlgorithm    String   // e.g. "AES-256-GCM"
+  kdfAlgorithm     String   // e.g. "scrypt"
+  kdfSalt          Bytes
+  kdfParamsJson    Json     // { N, r, p, dkLen }
+  manifestJson     Json     // { payloadKind, bundleVersion, hasUserFile, ... }
+  bundleHash       String   // "sha256:<hex>"
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  engram Engram @relation(fields: [engramId], references: [id], onDelete: Cascade)
 }
 
 model ApiKey {
@@ -116,12 +142,8 @@ enum Visibility {
   PUBLIC
 }
 
-enum FileType {
+enum PersonaFileType {
   SOUL
   IDENTITY
-  AGENTS
-  USER
-  MEMORY
-  HEARTBEAT
-  MEMORY_ENTRY
+  ENGRAM_JSON
 }

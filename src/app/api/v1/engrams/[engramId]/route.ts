@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { authenticateRequest } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
-import { filterEngramFiles } from "@/lib/engram-privacy";
+import { filterPersonaFiles } from "@/lib/engram-privacy";
 import { UpdateEngramSchema } from "@/lib/schemas/engram";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { deleteAvatar } from "@/lib/r2";
@@ -18,7 +18,9 @@ import { Visibility } from "@/generated/prisma/enums";
 type RouteParams = { params: Promise<{ engramId: string }> };
 
 /**
- * GET /api/v1/engrams/:engramId — Fetch Engram data
+ * GET /api/v1/engrams/:engramId — Fetch Engram data.
+ * Returns persona files and (for owner only) memory summary metadata.
+ * Never returns plaintext memory content.
  */
 export async function GET(request: NextRequest, { params }: RouteParams) {
   try {
@@ -31,7 +33,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
     const engram = await db.engram.findUnique({
       where: { id: engramId },
-      include: { files: true, owner: { select: { username: true } } },
+      include: {
+        personaFiles: true,
+        memoryBlob: { select: { updatedAt: true, manifestJson: true } },
+        owner: { select: { username: true } },
+      },
     });
 
     if (!engram) return notFound();
@@ -43,10 +49,11 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       return notFound(); // Don't reveal existence
     }
 
-    const files = filterEngramFiles(engram.files, isOwner);
+    const personaFiles = filterPersonaFiles(engram.personaFiles, isOwner);
 
-    return ok({
+    const response: Record<string, unknown> = {
       id: engram.id,
+      sourceEngramId: engram.sourceEngramId,
       name: engram.name,
       description: engram.description,
       visibility: engram.visibility,
@@ -56,12 +63,29 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       ownerUsername: engram.owner.username,
       createdAt: engram.createdAt.toISOString(),
       updatedAt: engram.updatedAt.toISOString(),
-      files: files.map((f) => ({
+      personaFiles: personaFiles.map((f) => ({
         fileType: f.fileType,
         filename: f.filename,
         content: f.content,
       })),
-    });
+    };
+
+    // Owner-only memory summary — never expose to non-owners
+    if (isOwner) {
+      const manifest = engram.memoryBlob?.manifestJson as Record<string, unknown> | null;
+      response.memory = {
+        hasMemory: !!engram.memoryBlob,
+        ...(manifest && {
+          hasUserFile: manifest.hasUserFile,
+          hasMemoryIndex: manifest.hasMemoryIndex,
+          memoryEntryCount: manifest.memoryEntryCount,
+          latestMemoryDate: manifest.latestMemoryDate,
+        }),
+        memoryUpdatedAt: engram.memoryBlob?.updatedAt.toISOString() ?? null,
+      };
+    }
+
+    return ok(response);
   } catch (error) {
     return handleApiError(error);
   }
@@ -90,6 +114,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     return ok({
       id: updated.id,
+      sourceEngramId: updated.sourceEngramId,
       name: updated.name,
       description: updated.description,
       visibility: updated.visibility,
@@ -101,7 +126,8 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 }
 
 /**
- * DELETE /api/v1/engrams/:engramId — Delete Engram
+ * DELETE /api/v1/engrams/:engramId — Delete Engram.
+ * Cascades to persona files, memory blob, and R2 avatar.
  */
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   try {

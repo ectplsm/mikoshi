@@ -2,7 +2,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { filterEngramFiles } from "@/lib/engram-privacy";
+import { filterPersonaFiles } from "@/lib/engram-privacy";
 import { Header } from "@/components/layout/header";
 import { EngramViewer } from "@/components/engram/engram-viewer";
 import { VisibilityBadge } from "@/components/ui/visibility-badge";
@@ -21,7 +21,7 @@ export default async function EngramPage({ params }: PageProps) {
   const engram = await db.engram.findUnique({
     where: { id: engramId },
     include: {
-      files: true,
+      personaFiles: true,
       owner: { select: { username: true, name: true, image: true } },
     },
   });
@@ -35,7 +35,7 @@ export default async function EngramPage({ params }: PageProps) {
     notFound();
   }
 
-  const visibleFiles = filterEngramFiles(engram.files, isOwner);
+  const visibleFiles = filterPersonaFiles(engram.personaFiles, isOwner);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -107,7 +107,7 @@ export default async function EngramPage({ params }: PageProps) {
           visibility={engram.visibility}
         />
 
-        {/* File viewer */}
+        {/* Persona file viewer */}
         <div className="mt-6">
           <EngramViewer
             files={visibleFiles.map((f) => ({

@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { authenticateRequest } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
-import { filterEngramFiles } from "@/lib/engram-privacy";
+import { filterPersonaFiles } from "@/lib/engram-privacy";
 import { generateEngramId } from "@/lib/engram-id";
 import { checkRateLimit } from "@/lib/rate-limit";
 import {
@@ -17,8 +17,8 @@ import { Visibility } from "@/generated/prisma/enums";
 type RouteParams = { params: Promise<{ engramId: string }> };
 
 /**
- * POST /api/v1/engrams/:engramId/clone — Clone a Public/Unlisted Engram
- * Only public files (SOUL.md, IDENTITY.md) are cloned.
+ * POST /api/v1/engrams/:engramId/clone — Clone a Public/Unlisted Engram.
+ * Only persona files (SOUL.md, IDENTITY.md) are cloned. Memory is never cloned.
  */
 export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     const source = await db.engram.findUnique({
       where: { id: engramId },
-      include: { files: true },
+      include: { personaFiles: true },
     });
 
     if (!source) return notFound();
@@ -42,24 +42,26 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       return notFound();
     }
 
-    // Only clone publicly visible files (unless it's your own)
-    const filesToClone = filterEngramFiles(source.files, isOwner);
+    // Only clone publicly visible persona files (unless it's your own)
+    const filesToClone = filterPersonaFiles(source.personaFiles, isOwner);
 
     if (filesToClone.length === 0) {
-      return err("No files available to clone", 400);
+      return err("No persona files available to clone", 400);
     }
 
     const newId = generateEngramId();
+    const newSourceId = `${source.sourceEngramId}-clone`;
 
     const cloned = await db.engram.create({
       data: {
         id: newId,
+        sourceEngramId: newSourceId,
         name: `${source.name} (clone)`,
         description: source.description,
         visibility: "PRIVATE",
         tags: source.tags,
         ownerId: authed.userId,
-        files: {
+        personaFiles: {
           create: filesToClone.map((f) => ({
             fileType: f.fileType,
             filename: f.filename,
@@ -71,6 +73,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     return created({
       id: cloned.id,
+      sourceEngramId: cloned.sourceEngramId,
       name: cloned.name,
       url: `/e/${cloned.id}`,
       clonedFrom: source.id,

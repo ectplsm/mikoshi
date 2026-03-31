@@ -1,16 +1,14 @@
 import JSZip from "jszip";
-import { FileType } from "@/generated/prisma/enums";
+import { PersonaFileType } from "@/generated/prisma/enums";
 
-/** Maps filenames (relative paths) to their FileType */
-const FILENAME_TO_TYPE: Record<string, FileType> = {
-  "SOUL.md": FileType.SOUL,
-  "IDENTITY.md": FileType.IDENTITY,
-  "AGENTS.md": FileType.AGENTS,
-  "USER.md": FileType.USER,
-  "MEMORY.md": FileType.MEMORY,
-  "HEARTBEAT.md": FileType.HEARTBEAT,
+/** Maps filenames to their PersonaFileType (persona files only) */
+const PERSONA_FILENAME_TO_TYPE: Record<string, PersonaFileType> = {
+  "SOUL.md": PersonaFileType.SOUL,
+  "IDENTITY.md": PersonaFileType.IDENTITY,
 };
 
+/** Memory file patterns — recognized but stored separately */
+const MEMORY_FILENAMES = new Set(["USER.md", "MEMORY.md"]);
 const MEMORY_ENTRY_PATTERN = /^memory\/\d{4}-\d{2}-\d{2}\.md$/;
 
 const IMAGE_EXTENSIONS = new Set([
@@ -22,8 +20,13 @@ const IMAGE_EXTENSIONS = new Set([
   ".svg",
 ]);
 
-export interface ParsedEngramFile {
-  fileType: FileType;
+export interface ParsedPersonaFile {
+  fileType: PersonaFileType;
+  filename: string;
+  content: string;
+}
+
+export interface ParsedMemoryFile {
   filename: string;
   content: string;
 }
@@ -35,18 +38,21 @@ export interface ParsedAvatar {
 }
 
 export interface ParsedEngram {
-  files: ParsedEngramFile[];
+  personaFiles: ParsedPersonaFile[];
+  memoryFiles: ParsedMemoryFile[];
   meta: Record<string, unknown> | null;
   avatar: ParsedAvatar | null;
 }
 
 /**
  * Parse an Engram Zip file into structured data.
+ * Persona files and memory files are separated at parse time.
  * Validates filenames against a whitelist and rejects path traversal.
  */
 export async function parseEngramZip(buffer: Buffer): Promise<ParsedEngram> {
   const zip = await JSZip.loadAsync(buffer);
-  const files: ParsedEngramFile[] = [];
+  const personaFiles: ParsedPersonaFile[] = [];
+  const memoryFiles: ParsedMemoryFile[] = [];
   let meta: Record<string, unknown> | null = null;
   let avatar: ParsedAvatar | null = null;
   let avatarPath: string | null = null;
@@ -82,7 +88,6 @@ export async function parseEngramZip(buffer: Buffer): Promise<ParsedEngram> {
     // Check if this is the avatar image
     const ext = normalized.slice(normalized.lastIndexOf(".")).toLowerCase();
     if (IMAGE_EXTENSIONS.has(ext)) {
-      // Match if it's the referenced avatar path, or if named "avatar.*"
       const basename = normalized.split("/").pop() ?? "";
       if (
         (avatarPath && normalized === normalizePath(avatarPath)) ||
@@ -98,22 +103,25 @@ export async function parseEngramZip(buffer: Buffer): Promise<ParsedEngram> {
       continue;
     }
 
-    // Known top-level files
-    const knownType = FILENAME_TO_TYPE[normalized];
-    if (knownType) {
+    // Persona files (SOUL.md, IDENTITY.md)
+    const personaType = PERSONA_FILENAME_TO_TYPE[normalized];
+    if (personaType) {
       const content = await entry.async("text");
-      files.push({ fileType: knownType, filename: normalized, content });
+      personaFiles.push({ fileType: personaType, filename: normalized, content });
       continue;
     }
 
-    // Memory entries
+    // Memory files (USER.md, MEMORY.md)
+    if (MEMORY_FILENAMES.has(normalized)) {
+      const content = await entry.async("text");
+      memoryFiles.push({ filename: normalized, content });
+      continue;
+    }
+
+    // Memory entries (memory/YYYY-MM-DD.md)
     if (MEMORY_ENTRY_PATTERN.test(normalized)) {
       const content = await entry.async("text");
-      files.push({
-        fileType: FileType.MEMORY_ENTRY,
-        filename: normalized,
-        content,
-      });
+      memoryFiles.push({ filename: normalized, content });
       continue;
     }
 
@@ -121,12 +129,12 @@ export async function parseEngramZip(buffer: Buffer): Promise<ParsedEngram> {
   }
 
   // Validate required files
-  const hasRequiredFiles = files.some((f) => f.fileType === FileType.SOUL);
-  if (!hasRequiredFiles) {
+  const hasSoul = personaFiles.some((f) => f.fileType === PersonaFileType.SOUL);
+  if (!hasSoul) {
     throw new Error("SOUL.md is required in the Engram zip");
   }
 
-  return { files, meta, avatar };
+  return { personaFiles, memoryFiles, meta, avatar };
 }
 
 /**

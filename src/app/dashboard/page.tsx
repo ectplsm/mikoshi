@@ -11,6 +11,7 @@ export default async function DashboardPage() {
 
   const engrams = await db.engram.findMany({
     where: { ownerId: session.user.id },
+    include: { memoryBlob: { select: { id: true } } },
     orderBy: { updatedAt: "desc" },
   });
 
@@ -39,6 +40,7 @@ export default async function DashboardPage() {
                   tags={e.tags}
                   avatarUrl={e.avatarUrl}
                   updatedAt={e.updatedAt.toISOString()}
+                  hasMemory={!!e.memoryBlob}
                 />
               ))}
             </div>

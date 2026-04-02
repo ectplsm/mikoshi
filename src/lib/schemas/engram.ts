@@ -58,6 +58,51 @@ export const EngramResponse = z.object({
   memory: MemorySummary.optional(),
 });
 
+// ─── Encrypted memory blob schemas ───
+
+// 20 MB in base64 characters (~15 MB raw binary)
+const MAX_BASE64_LENGTH = 20 * 1024 * 1024;
+
+const base64 = z.string().min(1, "Must be non-empty base64").max(
+  MAX_BASE64_LENGTH,
+  `Must not exceed ${MAX_BASE64_LENGTH} characters (~15 MB)`
+);
+
+export const ScryptParamsSchema = z.object({
+  N: z.number().int().positive(),
+  r: z.number().int().positive(),
+  p: z.number().int().positive(),
+  dkLen: z.number().int().positive(),
+});
+
+export const MemoryManifestSchema = z.object({
+  payloadKind: z.literal("memory"),
+  bundleVersion: z.number().int().positive(),
+  hasUserFile: z.boolean(),
+  hasMemoryIndex: z.boolean(),
+  memoryEntryCount: z.number().int().min(0),
+  latestMemoryDate: z.string().nullable(),
+});
+
+export const MemoryUploadSchema = z.object({
+  ciphertext: base64,
+  cipherAlgorithm: z.string().min(1),
+  cipherNonce: base64,
+  wrappedBundleKey: base64,
+  wrapAlgorithm: z.string().min(1),
+  kdfAlgorithm: z.string().min(1),
+  kdfSalt: base64,
+  kdfParams: ScryptParamsSchema,
+  manifest: MemoryManifestSchema,
+  bundleHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+});
+
+export type MemoryUploadInput = z.infer<typeof MemoryUploadSchema>;
+export type MemoryManifest = z.infer<typeof MemoryManifestSchema>;
+
 export type CreateEngramInput = z.infer<typeof CreateEngramSchema>;
 export type UpdateEngramInput = z.infer<typeof UpdateEngramSchema>;
 export type EngramResponseType = z.infer<typeof EngramResponse>;

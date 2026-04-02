@@ -7,6 +7,7 @@ import { Header } from "@/components/layout/header";
 import { EngramViewer } from "@/components/engram/engram-viewer";
 import { VisibilityBadge } from "@/components/ui/visibility-badge";
 import { TerminalCard } from "@/components/ui/terminal-card";
+import { MemoryStatus } from "@/components/engram/memory-status";
 import { EngramActions } from "./actions";
 import { Visibility } from "@/generated/prisma/enums";
 
@@ -22,6 +23,7 @@ export default async function EngramPage({ params }: PageProps) {
     where: { id: engramId },
     include: {
       personaFiles: true,
+      memoryBlob: { select: { updatedAt: true, manifestJson: true } },
       owner: { select: { username: true, name: true, image: true } },
     },
   });
@@ -106,6 +108,17 @@ export default async function EngramPage({ params }: PageProps) {
           isAuthenticated={!!session?.user}
           visibility={engram.visibility}
         />
+
+        {/* Owner-only memory status */}
+        {isOwner && (
+          <div className="mt-6">
+            <MemoryStatus
+              hasMemory={!!engram.memoryBlob}
+              manifest={engram.memoryBlob?.manifestJson as Record<string, unknown> | null}
+              memoryUpdatedAt={engram.memoryBlob?.updatedAt?.toISOString() ?? null}
+            />
+          </div>
+        )}
 
         {/* Persona file viewer */}
         <div className="mt-6">

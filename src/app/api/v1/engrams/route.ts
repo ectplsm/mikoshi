@@ -1,15 +1,14 @@
 import { NextRequest } from "next/server";
 import { authenticateRequest } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
-import { parseEngramZip } from "@/lib/engram-zip";
 import { generateEngramId } from "@/lib/engram-id";
-import { uploadAvatar } from "@/lib/r2";
 import { CreateEngramSchema } from "@/lib/schemas/engram";
 import { filterPersonaFiles } from "@/lib/engram-privacy";
 import { PersonaFileType } from "@/generated/prisma/enums";
 import { checkRateLimit } from "@/lib/rate-limit";
 import {
   ok,
+  err,
   created,
   unauthorized,
   rateLimited,
@@ -17,95 +16,69 @@ import {
 } from "@/lib/api-response";
 
 /**
- * POST /api/v1/engrams — Upload an Engram via Zip file.
- * Only persona files are stored as plaintext.
- * Memory files in the zip are acknowledged but not stored (client must encrypt and upload separately).
+ * POST /api/v1/engrams — Create a new Engram from metadata and persona text.
+ *
+ * Accepts a JSON body with Engram metadata, SOUL.md content (required),
+ * and IDENTITY.md content (optional). Memory files are never accepted here;
+ * encrypted memory must be uploaded separately via PUT /engrams/:id/memory.
  */
 export async function POST(request: NextRequest) {
   try {
     const authed = await authenticateRequest(request);
     if (!authed) return unauthorized();
 
-    const limit = checkRateLimit(`upload:${authed.userId}`, 10);
+    const limit = checkRateLimit(`create:${authed.userId}`, 10);
     if (!limit.allowed) return rateLimited(limit.resetAt);
 
-    const formData = await request.formData();
-    const file = formData.get("file") as File | null;
-    if (!file) {
-      return ok({ error: "No file provided" }, 400);
+    const contentType = request.headers.get("content-type") ?? "";
+    if (!contentType.includes("application/json")) {
+      return err("Content-Type must be application/json", 415);
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
-    const parsed = await parseEngramZip(buffer);
-
-    // Derive sourceEngramId from metadata or form field
-    const sourceId =
-      (formData.get("sourceEngramId") as string) ??
-      (parsed.meta?.id as string) ??
-      undefined;
-
-    const rawMeta = {
-      name:
-        (formData.get("name") as string) ??
-        (parsed.meta?.name as string) ??
-        "Untitled Engram",
-      sourceEngramId: sourceId,
-      description:
-        (formData.get("description") as string) ??
-        (parsed.meta?.description as string) ??
-        undefined,
-      visibility:
-        (formData.get("visibility") as string) ??
-        "PRIVATE",
-      tags: formData.get("tags")
-        ? JSON.parse(formData.get("tags") as string)
-        : (parsed.meta?.tags as string[]) ?? [],
-    };
-
-    const meta = CreateEngramSchema.parse(rawMeta);
+    const body = await request.json();
+    const input = CreateEngramSchema.parse(body);
     const engramId = generateEngramId();
 
-    // Upload avatar to R2 if present
-    let avatarUrl: string | null = null;
-    if (parsed.avatar) {
-      avatarUrl = await uploadAvatar(
-        engramId,
-        parsed.avatar.data,
-        parsed.avatar.mimeType
-      );
-    }
-
-    // Build persona file records (engram.json is generated from canonical metadata)
-    const personaFileRecords = parsed.personaFiles.map((f) => ({
-      fileType: f.fileType,
-      filename: f.filename,
-      content: f.content,
-    }));
-
-    // Add engram.json as a generated persona file from canonical metadata
-    personaFileRecords.push({
-      fileType: PersonaFileType.ENGRAM_JSON,
-      filename: "engram.json",
-      content: JSON.stringify(
-        {
-          name: meta.name,
-          description: meta.description ?? null,
-          tags: meta.tags,
-        },
-        null,
-        2
-      ),
-    });
+    // Build persona file records
+    const personaFileRecords: {
+      fileType: PersonaFileType;
+      filename: string;
+      content: string;
+    }[] = [
+      {
+        fileType: PersonaFileType.SOUL,
+        filename: "SOUL.md",
+        content: input.soul,
+      },
+      {
+        fileType: PersonaFileType.IDENTITY,
+        filename: "IDENTITY.md",
+        content: input.identity,
+      },
+      // engram.json is generated from canonical metadata
+      {
+        fileType: PersonaFileType.ENGRAM_JSON,
+        filename: "engram.json",
+        content: JSON.stringify(
+          {
+            name: input.name,
+            description: input.description ?? null,
+            tags: input.tags,
+          },
+          null,
+          2
+        ),
+      },
+    ];
 
     const engram = await db.engram.create({
       data: {
         id: engramId,
-        sourceEngramId: meta.sourceEngramId,
-        name: meta.name,
-        description: meta.description,
-        visibility: meta.visibility,
-        tags: meta.tags,
-        avatarUrl,
+        sourceEngramId: input.sourceEngramId,
+        name: input.name,
+        description: input.description,
+        visibility: input.visibility,
+        tags: input.tags,
         ownerId: authed.userId,
         personaFiles: {
           create: personaFileRecords,
@@ -114,17 +87,12 @@ export async function POST(request: NextRequest) {
       include: { personaFiles: true },
     });
 
-    const skippedMemoryFiles = parsed.memoryFiles.length;
-
     return created({
       id: engram.id,
       sourceEngramId: engram.sourceEngramId,
       name: engram.name,
       visibility: engram.visibility,
       url: `/e/${engram.id}`,
-      ...(skippedMemoryFiles > 0 && {
-        notice: `${skippedMemoryFiles} memory file(s) were not stored. Upload encrypted memory separately.`,
-      }),
     });
   } catch (error) {
     return handleApiError(error);

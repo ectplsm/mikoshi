@@ -17,6 +17,8 @@ export const CreateEngramSchema = z.object({
   description: z.string().max(500).optional(),
   visibility: VisibilitySchema.default("PRIVATE"),
   tags: z.array(z.string().max(30)).max(10).default([]),
+  soul: z.string().min(1, "SOUL.md content is required"),
+  identity: z.string().min(1, "IDENTITY.md content is required"),
 });
 
 export const UpdateEngramSchema = z.object({

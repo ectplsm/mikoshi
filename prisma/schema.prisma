@@ -48,13 +48,14 @@ model VerificationToken {
 // ─── Application models ───
 
 model User {
-  id        String   @id @default(cuid())
-  name      String?
-  username  String   @unique
-  email     String   @unique
-  image     String?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id            String    @id @default(cuid())
+  name          String?
+  username      String    @unique @default("")
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
   accounts Account[]
   sessions Session[]

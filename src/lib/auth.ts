@@ -9,6 +9,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     session({ session, user }) {
       session.user.id = user.id;
+      (session.user as Record<string, unknown>).username =
+        (user as Record<string, unknown>).username ?? "";
       return session;
     },
   },

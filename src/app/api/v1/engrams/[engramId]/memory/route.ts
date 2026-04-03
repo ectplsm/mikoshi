@@ -76,6 +76,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         kdfSalt,
         kdfParamsJson: input.kdfParams,
         manifestJson: input.manifest,
+        memoryContentHash: input.memoryContentHash,
         bundleHash: input.bundleHash,
       },
       update: {
@@ -89,6 +90,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
         kdfSalt,
         kdfParamsJson: input.kdfParams,
         manifestJson: input.manifest,
+        memoryContentHash: input.memoryContentHash,
         bundleHash: input.bundleHash,
       },
     });
@@ -101,6 +103,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
           select: { version: true },
         })
       )?.version,
+      memoryContentHash: input.memoryContentHash,
       bundleHash: input.bundleHash,
       updatedAt: new Date().toISOString(),
     });
@@ -153,6 +156,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
       kdfSalt: Buffer.from(blob.kdfSalt).toString("base64"),
       kdfParams: blob.kdfParamsJson,
       manifest: blob.manifestJson,
+      memoryContentHash: blob.memoryContentHash,
       bundleHash: blob.bundleHash,
       createdAt: blob.createdAt.toISOString(),
       updatedAt: blob.updatedAt.toISOString(),

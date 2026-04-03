@@ -43,6 +43,70 @@ export const MemorySummary = z.object({
   memoryUpdatedAt: z.string().nullable().optional(),
 });
 
+export const PersonaSyncToken = z.object({
+  hash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+  updatedAt: z.string().datetime(),
+});
+
+export const PersonaSyncStatus = z.object({
+  exists: z.boolean(),
+  token: PersonaSyncToken.nullable(),
+  files: z.object({
+    hasSoul: z.boolean(),
+    hasIdentity: z.boolean(),
+  }),
+});
+
+export const MemorySyncToken = z.object({
+  memoryContentHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+  bundleHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+  version: z.number().int().positive(),
+  updatedAt: z.string().datetime(),
+});
+
+export const MemorySyncSummary = z.object({
+  hasUserFile: z.boolean(),
+  hasMemoryIndex: z.boolean(),
+  memoryEntryCount: z.number().int().min(0),
+  latestMemoryDate: z.string().nullable(),
+});
+
+export const MemorySyncStatus = z.object({
+  exists: z.boolean(),
+  token: MemorySyncToken.nullable(),
+  summary: MemorySyncSummary.nullable(),
+});
+
+export const EngramSyncStatusResponse = z.object({
+  engramId: z.string(),
+  persona: PersonaSyncStatus,
+  memory: MemorySyncStatus,
+});
+
+export const SyncComparisonState = z.enum([
+  "match",
+  "different",
+  "local_unavailable",
+  "remote_unavailable",
+]);
+
+export const OverallDriftClass = z.enum([
+  "clean",
+  "persona",
+  "memory",
+  "mixed",
+  "incomplete",
+]);
+
 export const EngramResponse = z.object({
   id: z.string(),
   sourceEngramId: z.string(),
@@ -94,6 +158,10 @@ export const MemoryUploadSchema = z.object({
   kdfSalt: base64,
   kdfParams: ScryptParamsSchema,
   manifest: MemoryManifestSchema,
+  memoryContentHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
   bundleHash: z.string().regex(
     /^sha256:[0-9a-f]{64}$/,
     "Must be sha256:<64 hex chars>"
@@ -106,3 +174,6 @@ export type MemoryManifest = z.infer<typeof MemoryManifestSchema>;
 export type CreateEngramInput = z.infer<typeof CreateEngramSchema>;
 export type UpdateEngramInput = z.infer<typeof UpdateEngramSchema>;
 export type EngramResponseType = z.infer<typeof EngramResponse>;
+export type EngramSyncStatusResponseType = z.infer<typeof EngramSyncStatusResponse>;
+export type SyncComparisonStateType = z.infer<typeof SyncComparisonState>;
+export type OverallDriftClassType = z.infer<typeof OverallDriftClass>;

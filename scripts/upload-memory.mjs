@@ -15,6 +15,8 @@ import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { createHash, randomBytes, scryptSync, createCipheriv } from "node:crypto";
 
+const MEMORY_HASH_VERSION = "mikoshi.memory.v1";
+
 // ─── CLI args ───
 
 function arg(name) {
@@ -65,6 +67,26 @@ if (fileCount === 0) {
 
 console.log(`Found ${fileCount} memory files`);
 
+function normalizeMemoryText(content) {
+  return content
+    .replace(/^\uFEFF/, "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n");
+}
+
+function buildMemoryCanonicalPayload(inputFiles) {
+  const entries = Object.entries(inputFiles)
+    .filter(([path]) => path === "USER.md" || path === "MEMORY.md" || path.startsWith("memory/"))
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    .map(([path, content]) => {
+      const normalized = normalizeMemoryText(content);
+      return [path, String(Buffer.byteLength(normalized, "utf8")), normalized];
+    })
+    .flat();
+
+  return [MEMORY_HASH_VERSION, ...entries].join("\n");
+}
+
 // ─── Build plaintext bundle ───
 
 const bundle = JSON.stringify(files);
@@ -103,6 +125,8 @@ const ciphertext = Buffer.concat([encrypted, authTag]);
 
 // ─── Hash ───
 
+const memoryContentHash =
+  "sha256:" + createHash("sha256").update(buildMemoryCanonicalPayload(files)).digest("hex");
 const bundleHash = "sha256:" + createHash("sha256").update(ciphertext).digest("hex");
 
 // ─── Build manifest ───
@@ -131,6 +155,7 @@ const payload = {
   kdfSalt: kdfSalt.toString("base64"),
   kdfParams,
   manifest,
+  memoryContentHash,
   bundleHash,
 };
 

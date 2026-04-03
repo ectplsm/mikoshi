@@ -11,7 +11,8 @@ interface PageProps {
 }
 
 export default async function ProfilePage({ params }: PageProps) {
-  const { username } = await params;
+  const { username: rawUsername } = await params;
+  const username = decodeURIComponent(rawUsername).replace(/^@/, "");
 
   const user = await db.user.findUnique({
     where: { username },

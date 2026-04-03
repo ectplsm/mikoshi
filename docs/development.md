@@ -186,6 +186,37 @@ node scripts/upload-memory.mjs \
   --passphrase your-passphrase
 ```
 
+### Check sync status against local tokens
+
+```bash
+node scripts/check-sync-status.mjs \
+  --engram-id eng_XXXX \
+  --api-key YOUR_API_KEY \
+  --persona-hash sha256:YOUR_PERSONA_HASH \
+  --memory-content-hash sha256:YOUR_MEMORY_CONTENT_HASH
+```
+
+### Compute a local persona hash
+
+```bash
+node scripts/hash-persona.mjs \
+  --engram-dir ~/.relic/engrams/rebel
+```
+
+### Compute a local memory content hash
+
+```bash
+node scripts/hash-memory.mjs \
+  --engram-dir ~/.relic/engrams/rebel
+```
+
+### Manual sync-status flow
+
+1. Compute the local persona hash with `scripts/hash-persona.mjs`
+2. Compute the local memory content hash with `scripts/hash-memory.mjs`
+3. Call `scripts/check-sync-status.mjs` with both local tokens
+4. Inspect `overall`, `persona.state`, and `memory.state`
+
 ## Useful Commands
 
 ```bash

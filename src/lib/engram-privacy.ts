@@ -1,32 +1,28 @@
-import { FileType } from "@/generated/prisma/enums";
+import { PersonaFileType } from "@/generated/prisma/enums";
 
 /**
- * File types visible to non-owners on Public/Unlisted Engrams.
+ * Persona file types visible to non-owners on Public/Unlisted Engrams.
+ * All persona files are public-safe by definition.
  */
-export const PUBLIC_FILE_TYPES: ReadonlySet<FileType> = new Set([
-  FileType.SOUL,
-  FileType.IDENTITY,
+export const PUBLIC_PERSONA_FILE_TYPES: ReadonlySet<PersonaFileType> = new Set([
+  PersonaFileType.SOUL,
+  PersonaFileType.IDENTITY,
+  PersonaFileType.ENGRAM_JSON,
 ]);
 
 /**
- * File types that are always private (owner-only).
+ * Filter persona files based on ownership.
+ * Non-owners see SOUL.md and IDENTITY.md only (no engram.json for now).
+ * Owner sees all persona files.
  */
-export const PRIVATE_FILE_TYPES: ReadonlySet<FileType> = new Set([
-  FileType.USER,
-  FileType.MEMORY,
-  FileType.HEARTBEAT,
-  FileType.AGENTS,
-  FileType.MEMORY_ENTRY,
-]);
-
-/**
- * Filter Engram files based on ownership.
- * Non-owners only see SOUL.md and IDENTITY.md.
- */
-export function filterEngramFiles<T extends { fileType: FileType }>(
+export function filterPersonaFiles<T extends { fileType: PersonaFileType }>(
   files: T[],
   isOwner: boolean
 ): T[] {
   if (isOwner) return files;
-  return files.filter((f) => PUBLIC_FILE_TYPES.has(f.fileType));
+  return files.filter(
+    (f) =>
+      f.fileType === PersonaFileType.SOUL ||
+      f.fileType === PersonaFileType.IDENTITY
+  );
 }

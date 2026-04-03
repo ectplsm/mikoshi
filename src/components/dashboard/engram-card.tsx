@@ -13,6 +13,7 @@ interface EngramCardProps {
   tags: string[];
   avatarUrl?: string | null;
   updatedAt: string;
+  hasMemory?: boolean;
 }
 
 export function EngramCard({
@@ -23,6 +24,7 @@ export function EngramCard({
   tags,
   avatarUrl,
   updatedAt,
+  hasMemory,
 }: EngramCardProps) {
   return (
     <Link href={`/e/${id}`} className="block group">
@@ -70,8 +72,13 @@ export function EngramCard({
             </div>
           )}
 
-          <div className="text-[10px] text-muted-foreground/50">
-            updated {new Date(updatedAt).toLocaleDateString()}
+          <div className="flex items-center gap-3 text-[10px] text-muted-foreground/50">
+            <span>updated {new Date(updatedAt).toLocaleDateString("en-US")}</span>
+            {hasMemory && (
+              <span className="flex items-center gap-1 text-neon-green/60" title="Encrypted memory stored">
+                <span>&#9679;</span> memory
+              </span>
+            )}
           </div>
         </div>
       </TerminalCard>

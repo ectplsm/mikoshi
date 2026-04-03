@@ -2,11 +2,12 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { filterEngramFiles } from "@/lib/engram-privacy";
+import { filterPersonaFiles } from "@/lib/engram-privacy";
 import { Header } from "@/components/layout/header";
 import { EngramViewer } from "@/components/engram/engram-viewer";
 import { VisibilityBadge } from "@/components/ui/visibility-badge";
 import { TerminalCard } from "@/components/ui/terminal-card";
+import { MemoryStatus } from "@/components/engram/memory-status";
 import { EngramActions } from "./actions";
 import { Visibility } from "@/generated/prisma/enums";
 
@@ -21,7 +22,8 @@ export default async function EngramPage({ params }: PageProps) {
   const engram = await db.engram.findUnique({
     where: { id: engramId },
     include: {
-      files: true,
+      personaFiles: true,
+      memoryBlob: { select: { updatedAt: true, manifestJson: true } },
       owner: { select: { username: true, name: true, image: true } },
     },
   });
@@ -35,7 +37,7 @@ export default async function EngramPage({ params }: PageProps) {
     notFound();
   }
 
-  const visibleFiles = filterEngramFiles(engram.files, isOwner);
+  const visibleFiles = filterPersonaFiles(engram.personaFiles, isOwner);
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -76,11 +78,11 @@ export default async function EngramPage({ params }: PageProps) {
                 </span>
                 <span>
                   created{" "}
-                  {engram.createdAt.toLocaleDateString()}
+                  {engram.createdAt.toLocaleDateString("en-US")}
                 </span>
                 <span>
                   updated{" "}
-                  {engram.updatedAt.toLocaleDateString()}
+                  {engram.updatedAt.toLocaleDateString("en-US")}
                 </span>
               </div>
               {engram.tags.length > 0 && (
@@ -107,7 +109,18 @@ export default async function EngramPage({ params }: PageProps) {
           visibility={engram.visibility}
         />
 
-        {/* File viewer */}
+        {/* Owner-only memory status */}
+        {isOwner && (
+          <div className="mt-6">
+            <MemoryStatus
+              hasMemory={!!engram.memoryBlob}
+              manifest={engram.memoryBlob?.manifestJson as Record<string, unknown> | null}
+              memoryUpdatedAt={engram.memoryBlob?.updatedAt?.toISOString() ?? null}
+            />
+          </div>
+        )}
+
+        {/* Persona file viewer */}
         <div className="mt-6">
           <EngramViewer
             files={visibleFiles.map((f) => ({

@@ -120,7 +120,7 @@ export function ApiKeyManager() {
               <div className="flex items-center gap-3">
                 <span className="text-muted-foreground/50">
                   {key.lastUsedAt
-                    ? `used ${new Date(key.lastUsedAt).toLocaleDateString()}`
+                    ? `used ${new Date(key.lastUsedAt).toLocaleDateString("en-US")}`
                     : "never used"}
                 </span>
                 <button

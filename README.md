@@ -26,14 +26,22 @@ HEARTBEAT.md     # Periodic introspection
 memory/          # Date-based memory entries
 ```
 
+In Mikoshi's current sync model:
+
+- `SOUL.md` and `IDENTITY.md` are plaintext persona files
+- `USER.md`, `MEMORY.md`, and `memory/*.md` are encrypted client-side before upload
+- `archive.md` is local-only and never uploaded
+
 ## Features
 
-- **Upload** — Push Engrams via CLI ([Relic](https://github.com/ectplsm/relic)) or drag-and-drop Zip on the Web UI
+- **Persona Storage** — Create and store Engrams with plaintext `SOUL.md` and `IDENTITY.md`
+- **Encrypted Memory** — Upload distilled memory as an opaque encrypted bundle
+- **Sync Status** — Compare local persona and memory hashes against cloud state
 - **Share** — Set visibility to Public, Unlisted, or Private
 - **Clone** — Copy public Engrams from other users
 - **Privacy** — Only `SOUL.md` and `IDENTITY.md` are visible to non-owners; all other files are always private
 - **API Keys** — SHA-256 hashed, shown only once on creation
-- **Avatar** — Auto-extracted from `IDENTITY.md` frontmatter and stored on Cloudflare R2 (original files are never modified)
+- **Avatar** — Optional avatar storage on Cloudflare R2
 
 ## Tech Stack
 
@@ -84,15 +92,21 @@ All endpoints require authentication via Bearer token (API key) or session cooki
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `POST` | `/api/v1/engrams` | Upload Engram (multipart/form-data with .zip) |
+| `POST` | `/api/v1/engrams` | Create an Engram from JSON metadata plus `SOUL.md` / `IDENTITY.md` |
 | `GET` | `/api/v1/engrams` | List your Engrams |
 | `GET` | `/api/v1/engrams/:id` | Fetch Engram (privacy-filtered) |
 | `PATCH` | `/api/v1/engrams/:id` | Update metadata |
 | `DELETE` | `/api/v1/engrams/:id` | Delete Engram |
 | `POST` | `/api/v1/engrams/:id/clone` | Clone a public/unlisted Engram |
+| `PUT` | `/api/v1/engrams/:id/memory` | Upload encrypted memory bundle |
+| `GET` | `/api/v1/engrams/:id/memory` | Download encrypted memory bundle |
+| `DELETE` | `/api/v1/engrams/:id/memory` | Delete encrypted memory bundle |
+| `GET` | `/api/v1/engrams/:id/sync-status` | Fetch owner-only sync comparison tokens |
 | `POST` | `/api/v1/api-keys` | Create API key |
 | `GET` | `/api/v1/api-keys` | List API keys |
 | `DELETE` | `/api/v1/api-keys` | Delete API key |
+
+For local development and manual verification flows, see [docs/development.md](/Users/turtlekazu/McpProjects/mikoshi/docs/development.md).
 
 ## Pages
 

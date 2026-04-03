@@ -12,7 +12,7 @@ export const CreateEngramSchema = z.object({
   name: z.string().min(1).max(100),
   sourceEngramId: z.string().min(1).max(100).regex(
     /^[a-z0-9]+(-[a-z0-9]+)*$/,
-    "Must be lowercase alphanumeric with hyphens (e.g. 'johnny', 'my-engram')"
+    "Must be lowercase alphanumeric with hyphens (e.g. 'rebel', 'my-engram')"
   ),
   description: z.string().max(500).optional(),
   visibility: VisibilitySchema.default("PRIVATE"),

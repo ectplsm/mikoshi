@@ -65,7 +65,7 @@ model User {
 
 model Engram {
   id              String     @id // "eng_" + nanoid
-  sourceEngramId  String     // local-compatible Relic ID (e.g. "johnny")
+  sourceEngramId  String     // local-compatible Relic ID (e.g. "rebel")
   name            String
   description     String?
   visibility      Visibility @default(PRIVATE)

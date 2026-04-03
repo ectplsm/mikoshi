@@ -78,11 +78,11 @@ export default async function EngramPage({ params }: PageProps) {
                 </span>
                 <span>
                   created{" "}
-                  {engram.createdAt.toLocaleDateString()}
+                  {engram.createdAt.toLocaleDateString("en-US")}
                 </span>
                 <span>
                   updated{" "}
-                  {engram.updatedAt.toLocaleDateString()}
+                  {engram.updatedAt.toLocaleDateString("en-US")}
                 </span>
               </div>
               {engram.tags.length > 0 && (

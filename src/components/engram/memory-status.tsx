@@ -65,7 +65,7 @@ export function MemoryStatus({
           {memoryUpdatedAt && (
             <>
               <span>last synced</span>
-              <span>{new Date(memoryUpdatedAt).toLocaleDateString()}</span>
+              <span>{new Date(memoryUpdatedAt).toLocaleDateString("en-US")}</span>
             </>
           )}
         </div>

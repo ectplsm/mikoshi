@@ -46,7 +46,7 @@ export default async function ProfilePage({ params }: PageProps) {
               <h1 className="text-xl font-bold">{user.name ?? user.username}</h1>
               <p className="text-sm text-neon-cyan">@{user.username}</p>
               <p className="text-xs text-muted-foreground/50 mt-1">
-                member since {user.createdAt.toLocaleDateString()}
+                member since {user.createdAt.toLocaleDateString("en-US")}
               </p>
             </div>
           </div>

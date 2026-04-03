@@ -73,7 +73,7 @@ export function EngramCard({
           )}
 
           <div className="flex items-center gap-3 text-[10px] text-muted-foreground/50">
-            <span>updated {new Date(updatedAt).toLocaleDateString()}</span>
+            <span>updated {new Date(updatedAt).toLocaleDateString("en-US")}</span>
             {hasMemory && (
               <span className="flex items-center gap-1 text-neon-green/60" title="Encrypted memory stored">
                 <span>&#9679;</span> memory

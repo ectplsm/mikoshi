@@ -20,7 +20,7 @@ export default async function DashboardPage() {
       <Header />
       <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
         <div className="flex items-center gap-3 mb-8">
-          <span className="text-neon-cyan">&gt;</span>
+          <span className="text-brand">&gt;</span>
           <h1 className="text-xl font-bold">Dashboard</h1>
           <span className="text-muted-foreground text-sm">
             {"//"} {engrams.length} engram{engrams.length !== 1 ? "s" : ""}
@@ -46,7 +46,7 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div className="text-center py-16 text-muted-foreground text-sm">
-              <pre className="text-neon-cyan/20 text-xs mb-4">
+              <pre className="text-brand/20 text-xs mb-4">
                 {`  ┌──────────────────┐
   │  NO ENGRAMS FOUND │
   │  upload your first │

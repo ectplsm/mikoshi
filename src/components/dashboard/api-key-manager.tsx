@@ -59,7 +59,7 @@ export function ApiKeyManager() {
   };
 
   return (
-    <TerminalCard title="api_keys.manage" variant="magenta">
+    <TerminalCard title="api_keys.manage" variant="brand">
       <div className="space-y-4">
         {/* Create new key */}
         <div className="flex gap-2">
@@ -68,11 +68,11 @@ export function ApiKeyManager() {
             placeholder="key name"
             value={newKeyName}
             onChange={(e) => setNewKeyName(e.target.value)}
-            className="flex-1 bg-input border border-border rounded-sm px-3 py-1.5 text-sm font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-neon-cyan/60"
+            className="flex-1 bg-input border border-border rounded-sm px-3 py-1.5 text-sm font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-brand/60"
             onKeyDown={(e) => e.key === "Enter" && createKey()}
           />
           <NeonButton
-            variant="cyan"
+            variant="brand"
             size="sm"
             onClick={createKey}
             disabled={loading || !newKeyName.trim()}
@@ -91,7 +91,7 @@ export function ApiKeyManager() {
               {createdKey}
             </code>
             <NeonButton
-              variant="cyan"
+              variant="brand"
               size="sm"
               className="mt-2"
               onClick={() => {

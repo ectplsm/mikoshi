@@ -4,21 +4,20 @@ import { cn } from "@/lib/utils";
 
 interface NeonButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "cyan" | "magenta";
+  variant?: "brand";
   size?: "sm" | "md" | "lg";
 }
 
 export function NeonButton({
-  variant = "cyan",
+  variant = "brand",
   size = "md",
   className,
   children,
   ...props
 }: NeonButtonProps) {
   const colors = {
-    cyan: "border-neon-cyan/60 text-neon-cyan hover:bg-neon-cyan/10 hover:box-glow-cyan",
-    magenta:
-      "border-neon-magenta/60 text-neon-magenta hover:bg-neon-magenta/10 hover:box-glow-magenta",
+    brand:
+      "border-brand/60 text-brand hover:bg-brand/10 hover:box-glow-brand",
   }[variant];
 
   const sizes = {

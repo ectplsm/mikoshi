@@ -38,7 +38,7 @@ export function EngramViewer({ files }: EngramViewerProps) {
             onClick={() => setActiveTab(idx)}
             className={`px-3 py-1.5 text-xs font-mono border rounded-t-sm transition-colors cursor-pointer whitespace-nowrap ${
               idx === activeTab
-                ? "border-neon-cyan/40 border-b-transparent text-neon-cyan bg-card"
+                ? "border-brand/40 border-b-transparent text-brand bg-card"
                 : "border-transparent text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -48,7 +48,7 @@ export function EngramViewer({ files }: EngramViewerProps) {
       </div>
 
       {/* Content */}
-      <TerminalCard title={`cat ${activeFile.filename}`} variant="cyan">
+      <TerminalCard title={`cat ${activeFile.filename}`} variant="brand">
         <pre className="text-sm text-foreground/90 whitespace-pre-wrap break-words overflow-x-auto max-h-[600px] overflow-y-auto">
           {activeFile.content}
         </pre>

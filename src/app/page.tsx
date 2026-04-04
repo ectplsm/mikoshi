@@ -31,7 +31,7 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 flex flex-col items-center justify-center px-4 scanlines">
-        <pre className="text-neon-cyan glow-cyan text-xs sm:text-sm md:text-base leading-tight mb-8 select-none overflow-x-auto max-w-full">
+        <pre className="text-brand glow-brand text-xs sm:text-sm md:text-base leading-tight mb-8 select-none overflow-x-auto max-w-full">
           {HERO_LOGO}
         </pre>
         <pre className="text-muted-foreground text-xs sm:text-sm leading-relaxed mb-8 select-none">
@@ -39,25 +39,25 @@ export default async function Home() {
         </pre>
 
         <div className="max-w-xl w-full space-y-6">
-          <TerminalCard title="system.init" variant="cyan">
+          <TerminalCard title="system.init" variant="brand">
             <div className="space-y-3 text-sm">
               <p className="text-muted-foreground">
-                <span className="text-neon-cyan">&gt;</span> Mikoshi is a cloud
+                <span className="text-brand">&gt;</span> Mikoshi is a cloud
                 fortress for storing, sharing, and managing AI persona data
                 (Engrams).
               </p>
               <p className="text-muted-foreground">
-                <span className="text-neon-cyan">&gt;</span> Upload your Engram
+                <span className="text-brand">&gt;</span> Upload your Engram
                 via CLI or Web UI. Share with the world or keep it private.
               </p>
               <p className="text-muted-foreground">
-                <span className="text-neon-cyan">&gt;</span> Clone public
+                <span className="text-brand">&gt;</span> Clone public
                 Engrams from other hackers.
               </p>
             </div>
           </TerminalCard>
 
-          <TerminalCard title="auth.connect" variant="magenta">
+          <TerminalCard title="auth.connect" variant="brand">
             <div className="flex flex-col items-center gap-4 py-4">
               <GlitchText as="p" className="text-lg text-foreground">
                 JACK IN TO THE SYSTEM
@@ -68,7 +68,7 @@ export default async function Home() {
                   await signIn("google");
                 }}
               >
-                <NeonButton variant="cyan" size="lg" type="submit">
+                <NeonButton variant="brand" size="lg" type="submit">
                   [ SIGN IN WITH GOOGLE ]
                 </NeonButton>
               </form>

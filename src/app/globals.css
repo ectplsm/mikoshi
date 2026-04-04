@@ -11,9 +11,9 @@
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
 
-  /* Cyberpunk palette */
-  --color-neon-cyan: oklch(0.85 0.15 192);
-  --color-neon-magenta: oklch(0.7 0.25 330);
+  /* Brand palette */
+  --color-brand: var(--brand);
+  --color-brand-foreground: var(--brand-foreground);
   --color-neon-green: oklch(0.8 0.2 145);
   --color-neon-yellow: oklch(0.9 0.15 90);
 
@@ -59,38 +59,40 @@
 :root {
   --font-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-geist-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-  --background: oklch(0.09 0.005 270);
-  --foreground: oklch(0.9 0 0);
-  --card: oklch(0.12 0.008 270);
-  --card-foreground: oklch(0.9 0 0);
-  --popover: oklch(0.12 0.008 270);
-  --popover-foreground: oklch(0.9 0 0);
-  --primary: oklch(0.85 0.15 192);
-  --primary-foreground: oklch(0.1 0.005 270);
-  --secondary: oklch(0.18 0.01 270);
-  --secondary-foreground: oklch(0.9 0 0);
-  --muted: oklch(0.18 0.01 270);
-  --muted-foreground: oklch(0.6 0 0);
-  --accent: oklch(0.7 0.25 330);
-  --accent-foreground: oklch(0.95 0 0);
+  --brand: #bfe000;
+  --brand-foreground: #1d1d1d;
+  --background: #272727;
+  --foreground: #f4f4f0;
+  --card: #2f2f2f;
+  --card-foreground: #f4f4f0;
+  --popover: #2f2f2f;
+  --popover-foreground: #f4f4f0;
+  --primary: var(--brand);
+  --primary-foreground: var(--brand-foreground);
+  --secondary: #343434;
+  --secondary-foreground: #f4f4f0;
+  --muted: #343434;
+  --muted-foreground: #a6a69b;
+  --accent: var(--brand);
+  --accent-foreground: var(--brand-foreground);
   --destructive: oklch(0.65 0.25 25);
-  --border: oklch(0.25 0.015 270);
-  --input: oklch(0.2 0.01 270);
-  --ring: oklch(0.85 0.15 192);
-  --chart-1: oklch(0.85 0.15 192);
-  --chart-2: oklch(0.7 0.25 330);
+  --border: #474f28;
+  --input: #313313;
+  --ring: var(--brand);
+  --chart-1: var(--brand);
+  --chart-2: var(--brand);
   --chart-3: oklch(0.8 0.2 145);
   --chart-4: oklch(0.9 0.15 90);
   --chart-5: oklch(0.65 0.25 25);
   --radius: 0.375rem;
-  --sidebar: oklch(0.1 0.005 270);
-  --sidebar-foreground: oklch(0.9 0 0);
-  --sidebar-primary: oklch(0.85 0.15 192);
-  --sidebar-primary-foreground: oklch(0.1 0.005 270);
-  --sidebar-accent: oklch(0.18 0.01 270);
-  --sidebar-accent-foreground: oklch(0.9 0 0);
-  --sidebar-border: oklch(0.25 0.015 270);
-  --sidebar-ring: oklch(0.85 0.15 192);
+  --sidebar: #2b2b2b;
+  --sidebar-foreground: #f4f4f0;
+  --sidebar-primary: var(--brand);
+  --sidebar-primary-foreground: var(--brand-foreground);
+  --sidebar-accent: #343434;
+  --sidebar-accent-foreground: #f4f4f0;
+  --sidebar-border: #474f28;
+  --sidebar-ring: var(--brand);
 }
 
 @layer base {
@@ -105,27 +107,17 @@
   }
 }
 
-/* ─── Cyberpunk utility classes ─── */
+/* ─── Brand utility classes ─── */
 
 @layer utilities {
-  .glow-cyan {
-    text-shadow: 0 0 8px oklch(0.85 0.15 192 / 0.6),
-      0 0 20px oklch(0.85 0.15 192 / 0.3);
+  .glow-brand {
+    text-shadow: 0 0 8px color-mix(in srgb, var(--brand) 60%, transparent),
+      0 0 20px color-mix(in srgb, var(--brand) 30%, transparent);
   }
 
-  .glow-magenta {
-    text-shadow: 0 0 8px oklch(0.7 0.25 330 / 0.6),
-      0 0 20px oklch(0.7 0.25 330 / 0.3);
-  }
-
-  .box-glow-cyan {
-    box-shadow: 0 0 8px oklch(0.85 0.15 192 / 0.3),
-      inset 0 0 8px oklch(0.85 0.15 192 / 0.05);
-  }
-
-  .box-glow-magenta {
-    box-shadow: 0 0 8px oklch(0.7 0.25 330 / 0.3),
-      inset 0 0 8px oklch(0.7 0.25 330 / 0.05);
+  .box-glow-brand {
+    box-shadow: 0 0 8px color-mix(in srgb, var(--brand) 30%, transparent),
+      inset 0 0 8px color-mix(in srgb, var(--brand) 5%, transparent);
   }
 
   .scanlines {

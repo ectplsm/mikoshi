@@ -44,7 +44,7 @@ export default async function EngramPage({ params }: PageProps) {
       <Header />
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
         {/* Engram header */}
-        <TerminalCard title={`engram.inspect ${engram.id}`} variant="cyan">
+        <TerminalCard title={`engram.inspect ${engram.id}`} variant="brand">
           <div className="flex items-start gap-4">
             {engram.avatarUrl && (
               <Image
@@ -71,7 +71,7 @@ export default async function EngramPage({ params }: PageProps) {
                   by{" "}
                   <a
                     href={`/@${engram.owner.username}`}
-                    className="text-neon-cyan hover:underline"
+                    className="text-brand hover:underline"
                   >
                     @{engram.owner.username}
                   </a>
@@ -90,7 +90,7 @@ export default async function EngramPage({ params }: PageProps) {
                   {engram.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="text-[10px] text-neon-cyan/70 border border-neon-cyan/20 px-1.5 py-0.5 rounded-sm"
+                      className="text-[10px] text-brand/70 border border-brand/20 px-1.5 py-0.5 rounded-sm"
                     >
                       #{tag}
                     </span>

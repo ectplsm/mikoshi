@@ -55,7 +55,7 @@ export function EngramActions({
     <div className="flex items-center gap-3 mt-4">
       {isAuthenticated && !isOwner && visibility !== "PRIVATE" && (
         <NeonButton
-          variant="cyan"
+          variant="brand"
           size="sm"
           onClick={handleClone}
           disabled={cloning}
@@ -67,7 +67,7 @@ export function EngramActions({
       {isOwner && (
         <>
           <NeonButton
-            variant="magenta"
+            variant="brand"
             size="sm"
             onClick={handleDelete}
             disabled={deleting}

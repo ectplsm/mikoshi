@@ -30,7 +30,7 @@ export function EngramCard({
     <Link href={`/e/${id}`} className="block group">
       <TerminalCard
         title={id}
-        className="h-full transition-all duration-200 group-hover:box-glow-cyan"
+        className="h-full transition-all duration-200 group-hover:box-glow-brand"
       >
         <div className="space-y-3">
           <div className="flex items-start gap-3">
@@ -64,7 +64,7 @@ export function EngramCard({
               {tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[10px] text-neon-cyan/70 border border-neon-cyan/20 px-1.5 py-0.5 rounded-sm"
+                  className="text-[10px] text-brand/70 border border-brand/20 px-1.5 py-0.5 rounded-sm"
                 >
                   #{tag}
                 </span>

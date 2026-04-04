@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { requireUsername } from "@/lib/require-username";
 import { Header } from "@/components/layout/header";
 import { EngramCard } from "@/components/dashboard/engram-card";
+import { CodeBlock } from "@/components/ui/code-block";
 
 export default async function DashboardPage() {
   const session = await requireUsername();
@@ -41,14 +42,16 @@ export default async function DashboardPage() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-16 text-muted-foreground text-sm">
-            <pre className="text-brand/20 text-xs mb-4">
-              {`  ┌──────────────────┐
-  │  NO ENGRAMS FOUND │
-  │  upload your first │
-  │  engram below      │
-  └──────────────────┘`}
-            </pre>
+          <div className="text-center py-16 space-y-4">
+            <p className="text-sm text-muted-foreground/50">
+              &gt; no engrams found
+            </p>
+            <div className="inline-block text-left">
+              <p className="text-xs text-muted-foreground mb-2">
+                Upload your Engram from Relic:
+              </p>
+              <CodeBlock>relic mikoshi upload --engram your-engram</CodeBlock>
+            </div>
           </div>
         )}
       </main>

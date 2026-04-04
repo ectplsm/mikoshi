@@ -1,6 +1,7 @@
 import { Header } from "@/components/layout/header";
 import { GlitchText } from "@/components/ui/glitch-text";
 import { TerminalCard } from "@/components/ui/terminal-card";
+import { CodeBlock } from "@/components/ui/code-block";
 import { auth, signIn } from "@/lib/auth";
 import { NeonButton } from "@/components/ui/neon-button";
 import Link from "next/link";
@@ -81,12 +82,10 @@ export default async function Home() {
                 Engrams from other users.
               </p>
               <div className="pt-1">
-                <p className="text-xs text-muted-foreground/70 mb-1">
+                <p className="text-xs text-muted-foreground/70 mb-2">
                   Get started with Relic:
                 </p>
-                <code className="inline-block text-xs text-brand border border-brand/25 bg-brand/5 rounded-sm px-2 py-1 select-all">
-                  npm install -g @ectplsm/relic
-                </code>
+                <CodeBlock>npm install -g @ectplsm/relic</CodeBlock>
               </div>
             </div>
           </TerminalCard>

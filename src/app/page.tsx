@@ -108,9 +108,6 @@ export default async function Home() {
             </div>
           </TerminalCard>
 
-          <div className="text-center text-xs text-muted-foreground/50 font-mono">
-            Copyright © 2026 Ectplsm Lab
-          </div>
         </div>
       </main>
     </div>

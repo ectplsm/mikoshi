@@ -25,7 +25,7 @@ export async function Header() {
                 dashboard
               </Link>
               <Link
-                href={`/@${(session.user as { username?: string }).username ?? ""}`}
+                href={`/@${session.user.username}`}
                 className="text-sm text-muted-foreground hover:text-brand transition-colors"
               >
                 profile

@@ -9,31 +9,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     session({ session, user }) {
       session.user.id = user.id;
-      (session.user as Record<string, unknown>).username =
-        (user as Record<string, unknown>).username ?? "";
+      session.user.username = user.username ?? "";
       return session;
-    },
-  },
-  events: {
-    async createUser({ user }) {
-      // Generate a unique username from email or name
-      const base = (user.email?.split("@")[0] ?? user.name ?? "user")
-        .toLowerCase()
-        .replace(/[^a-z0-9_-]/g, "")
-        .slice(0, 20);
-
-      let username = base;
-      let suffix = 0;
-
-      while (await db.user.findUnique({ where: { username } })) {
-        suffix++;
-        username = `${base}${suffix}`;
-      }
-
-      await db.user.update({
-        where: { id: user.id },
-        data: { username },
-      });
     },
   },
   pages: {

@@ -1,11 +1,10 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
+import { requireUsername } from "@/lib/require-username";
 import { Header } from "@/components/layout/header";
+import { ProfileEditor } from "@/components/dashboard/profile-editor";
 import { ApiKeyManager } from "@/components/dashboard/api-key-manager";
 
 export default async function SettingsPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/");
+  const session = await requireUsername();
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -17,6 +16,10 @@ export default async function SettingsPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-6">
+          <ProfileEditor
+            currentUsername={session.user.username}
+            currentDisplayName={session.user.name ?? ""}
+          />
           <ApiKeyManager />
         </div>
       </main>

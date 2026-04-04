@@ -1,9 +1,9 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
 import { Header } from "@/components/layout/header";
 import { EngramCard } from "@/components/dashboard/engram-card";
 import { TerminalCard } from "@/components/ui/terminal-card";
+import { UserAvatar } from "@/components/ui/user-avatar";
 import { Visibility } from "@/generated/prisma/enums";
 import { formatDateUtc } from "@/lib/utils";
 
@@ -33,16 +33,7 @@ export default async function ProfilePage({ params }: PageProps) {
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
         <TerminalCard title="Profile" variant="brand">
           <div className="flex items-center gap-4">
-            {user.image && (
-              <Image
-                src={user.image}
-                alt=""
-                className="w-16 h-16 rounded-sm border border-border object-cover"
-                width={64}
-                height={64}
-                unoptimized
-              />
-            )}
+            <UserAvatar username={user.username} size="lg" />
             <div>
               <h1 className="text-xl font-bold">{user.name ?? user.username}</h1>
               <p className="text-sm text-brand">@{user.username}</p>

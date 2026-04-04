@@ -1,8 +1,9 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
 import { MemoryUploadSchema } from "@/lib/schemas/engram";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { Prisma } from "@/generated/prisma/client";
 import {
   ok,
   err,
@@ -15,6 +16,12 @@ import {
 
 type RouteParams = { params: Promise<{ engramId: string }> };
 
+type CurrentMemoryToken = {
+  memoryContentHash: string;
+  version: number;
+  updatedAt: string;
+} | null;
+
 /**
  * Resolve the Engram and verify ownership.
  * Returns the engram record or a NextResponse error.
@@ -24,6 +31,36 @@ async function resolveOwnedEngram(engramId: string, userId: string) {
   if (!engram) return { error: "not_found" as const };
   if (engram.ownerId !== userId) return { error: "forbidden" as const };
   return { engram };
+}
+
+async function getCurrentMemoryToken(engramId: string): Promise<CurrentMemoryToken> {
+  const blob = await db.engramMemoryBlob.findUnique({
+    where: { engramId },
+    select: {
+      memoryContentHash: true,
+      version: true,
+      updatedAt: true,
+    },
+  });
+
+  if (!blob) return null;
+
+  return {
+    memoryContentHash: blob.memoryContentHash,
+    version: blob.version,
+    updatedAt: blob.updatedAt.toISOString(),
+  };
+}
+
+function memoryConflict(currentMemory: CurrentMemoryToken) {
+  return NextResponse.json(
+    {
+      error: "Memory drift conflict",
+      code: "MEMORY_CONFLICT",
+      currentMemory,
+    },
+    { status: 409 }
+  );
 }
 
 /**
@@ -61,51 +98,79 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const wrappedBundleKey = Buffer.from(input.wrappedBundleKey, "base64");
     const kdfSalt = Buffer.from(input.kdfSalt, "base64");
 
-    // Upsert: create or replace the memory blob for this Engram
-    await db.engramMemoryBlob.upsert({
+    if (input.expectedRemoteMemoryContentHash === null) {
+      try {
+        await db.engramMemoryBlob.create({
+          data: {
+            engramId,
+            version: 1,
+            ciphertext,
+            cipherAlgorithm: input.cipherAlgorithm,
+            cipherNonce,
+            wrappedBundleKey,
+            wrapAlgorithm: input.wrapAlgorithm,
+            kdfAlgorithm: input.kdfAlgorithm,
+            kdfSalt,
+            kdfParamsJson: input.kdfParams,
+            manifestJson: input.manifest,
+            memoryContentHash: input.memoryContentHash,
+            bundleHash: input.bundleHash,
+          },
+        });
+      } catch (error) {
+        if (
+          error instanceof Prisma.PrismaClientKnownRequestError &&
+          error.code === "P2002"
+        ) {
+          return memoryConflict(await getCurrentMemoryToken(engramId));
+        }
+        throw error;
+      }
+    } else {
+      const result = await db.engramMemoryBlob.updateMany({
+        where: {
+          engramId,
+          memoryContentHash: input.expectedRemoteMemoryContentHash,
+        },
+        data: {
+          version: { increment: 1 },
+          ciphertext,
+          cipherAlgorithm: input.cipherAlgorithm,
+          cipherNonce,
+          wrappedBundleKey,
+          wrapAlgorithm: input.wrapAlgorithm,
+          kdfAlgorithm: input.kdfAlgorithm,
+          kdfSalt,
+          kdfParamsJson: input.kdfParams,
+          manifestJson: input.manifest,
+          memoryContentHash: input.memoryContentHash,
+          bundleHash: input.bundleHash,
+        },
+      });
+
+      if (result.count === 0) {
+        return memoryConflict(await getCurrentMemoryToken(engramId));
+      }
+    }
+
+    const saved = await db.engramMemoryBlob.findUnique({
       where: { engramId },
-      create: {
-        engramId,
-        version: 1,
-        ciphertext,
-        cipherAlgorithm: input.cipherAlgorithm,
-        cipherNonce,
-        wrappedBundleKey,
-        wrapAlgorithm: input.wrapAlgorithm,
-        kdfAlgorithm: input.kdfAlgorithm,
-        kdfSalt,
-        kdfParamsJson: input.kdfParams,
-        manifestJson: input.manifest,
-        memoryContentHash: input.memoryContentHash,
-        bundleHash: input.bundleHash,
-      },
-      update: {
-        version: { increment: 1 },
-        ciphertext,
-        cipherAlgorithm: input.cipherAlgorithm,
-        cipherNonce,
-        wrappedBundleKey,
-        wrapAlgorithm: input.wrapAlgorithm,
-        kdfAlgorithm: input.kdfAlgorithm,
-        kdfSalt,
-        kdfParamsJson: input.kdfParams,
-        manifestJson: input.manifest,
-        memoryContentHash: input.memoryContentHash,
-        bundleHash: input.bundleHash,
+      select: {
+        version: true,
+        updatedAt: true,
       },
     });
 
+    if (!saved) {
+      return err("Memory blob was not found after upload", 500);
+    }
+
     return ok({
       engramId,
-      version: (
-        await db.engramMemoryBlob.findUnique({
-          where: { engramId },
-          select: { version: true },
-        })
-      )?.version,
+      version: saved.version,
       memoryContentHash: input.memoryContentHash,
       bundleHash: input.bundleHash,
-      updatedAt: new Date().toISOString(),
+      updatedAt: saved.updatedAt.toISOString(),
     });
   } catch (error) {
     return handleApiError(error);

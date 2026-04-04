@@ -7,6 +7,7 @@
  *     --engram-dir ~/.relic/engrams/rebel \
  *     --engram-id <mikoshi-engram-id> \
  *     --api-key <your-api-key> \
+ *     --expected-remote-memory-content-hash sha256:...|null \
  *     --passphrase <encryption-passphrase> \
  *     [--base-url http://localhost:3000]
  */
@@ -29,10 +30,18 @@ const engramDir = arg("engram-dir");
 const engramId = arg("engram-id");
 const apiKey = arg("api-key");
 const passphrase = arg("passphrase");
+const expectedRemoteMemoryContentHashArg = arg("expected-remote-memory-content-hash");
 const baseUrl = arg("base-url") ?? "http://localhost:3000";
+const expectedRemoteMemoryContentHash =
+  expectedRemoteMemoryContentHashArg === undefined ||
+  expectedRemoteMemoryContentHashArg === "null"
+    ? null
+    : expectedRemoteMemoryContentHashArg;
 
 if (!engramDir || !engramId || !apiKey || !passphrase) {
-  console.error("Usage: node scripts/upload-memory.mjs --engram-dir <dir> --engram-id <id> --api-key <key> --passphrase <pass>");
+  console.error(
+    "Usage: node scripts/upload-memory.mjs --engram-dir <dir> --engram-id <id> --api-key <key> --passphrase <pass> [--expected-remote-memory-content-hash sha256:...|null]"
+  );
   process.exit(1);
 }
 
@@ -155,6 +164,7 @@ const payload = {
   kdfSalt: kdfSalt.toString("base64"),
   kdfParams,
   manifest,
+  expectedRemoteMemoryContentHash,
   memoryContentHash,
   bundleHash,
 };

@@ -183,8 +183,12 @@ node scripts/upload-memory.mjs \
   --engram-dir path/to/engram \
   --engram-id eng_XXXX \
   --api-key YOUR_API_KEY \
+  --expected-remote-memory-content-hash sha256:REMOTE_MEMORY_HASH \
   --passphrase your-passphrase
 ```
+
+Use `null` for the first upload when the Engram has no remote memory yet.
+If the remote memory hash changes before the write lands, the endpoint returns `409 Conflict`.
 
 ### Overwrite remote persona with local SOUL.md and IDENTITY.md
 
@@ -229,6 +233,13 @@ node scripts/hash-memory.mjs \
 2. Compute the local memory content hash with `scripts/hash-memory.mjs`
 3. Call `scripts/check-sync-status.mjs` with both local tokens
 4. Inspect `overall`, `persona.state`, and `memory.state`
+
+### Manual memory overwrite flow
+
+1. Call `scripts/check-sync-status.mjs` and note `remote.memory.token.memoryContentHash`
+2. For the first memory upload, pass `--expected-remote-memory-content-hash null`
+3. For later uploads, pass the last observed remote memory hash to `scripts/upload-memory.mjs`
+4. Re-run `scripts/check-sync-status.mjs` to confirm `memory.state` returns to `match`
 
 ### Manual persona overwrite flow
 

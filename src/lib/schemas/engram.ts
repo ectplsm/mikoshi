@@ -178,6 +178,10 @@ export const MemoryUploadSchema = z.object({
   kdfSalt: base64,
   kdfParams: ScryptParamsSchema,
   manifest: MemoryManifestSchema,
+  expectedRemoteMemoryContentHash: z
+    .string()
+    .regex(/^sha256:[0-9a-f]{64}$/, "Must be sha256:<64 hex chars>")
+    .nullable(),
   memoryContentHash: z.string().regex(
     /^sha256:[0-9a-f]{64}$/,
     "Must be sha256:<64 hex chars>"
@@ -188,7 +192,22 @@ export const MemoryUploadSchema = z.object({
   ),
 });
 
+export const MemoryUploadResponse = z.object({
+  engramId: z.string(),
+  version: z.number().int().positive(),
+  memoryContentHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+  bundleHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+  updatedAt: z.string().datetime(),
+});
+
 export type MemoryUploadInput = z.infer<typeof MemoryUploadSchema>;
+export type MemoryUploadResponseType = z.infer<typeof MemoryUploadResponse>;
 export type MemoryManifest = z.infer<typeof MemoryManifestSchema>;
 
 export type CreateEngramInput = z.infer<typeof CreateEngramSchema>;

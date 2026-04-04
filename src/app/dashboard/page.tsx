@@ -1,12 +1,10 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { requireUsername } from "@/lib/require-username";
 import { Header } from "@/components/layout/header";
 import { EngramCard } from "@/components/dashboard/engram-card";
 
 export default async function DashboardPage() {
-  const session = await auth();
-  if (!session?.user?.id) redirect("/");
+  const session = await requireUsername();
 
   const engrams = await db.engram.findMany({
     where: { ownerId: session.user.id },

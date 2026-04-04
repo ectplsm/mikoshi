@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { TerminalCard } from "@/components/ui/terminal-card";
 import { NeonButton } from "@/components/ui/neon-button";
@@ -22,6 +22,8 @@ function usernameErrorMessage(
   }
 }
 
+type AvailabilityStatus = "idle" | "checking" | "available" | "taken";
+
 interface UsernameSetupProps {
   initialDisplayName?: string;
 }
@@ -32,11 +34,52 @@ export function UsernameSetup({ initialDisplayName = "" }: UsernameSetupProps) {
   const [displayName, setDisplayName] = useState(initialDisplayName);
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [availability, setAvailability] = useState<AvailabilityStatus>("idle");
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const validationError = username
     ? usernameErrorMessage(validateUsername(username))
     : null;
-  const canSave = username.length > 0 && !validationError && !saving;
+
+  // Debounced availability check
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    // Skip check if empty or has validation errors
+    if (!username || validationError) {
+      setAvailability("idle");
+      return;
+    }
+
+    setAvailability("checking");
+
+    debounceRef.current = setTimeout(async () => {
+      try {
+        const res = await fetch(
+          `/api/v1/me/username-availability?username=${encodeURIComponent(username)}`
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setAvailability(data.available ? "available" : "taken");
+        } else {
+          setAvailability("idle");
+        }
+      } catch {
+        setAvailability("idle");
+      }
+    }, 400);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [username, validationError]);
+
+  const canSave =
+    username.length > 0 &&
+    !validationError &&
+    !saving &&
+    availability !== "checking" &&
+    availability !== "taken";
 
   const confirm = useCallback(async () => {
     if (!canSave) return;
@@ -59,6 +102,7 @@ export function UsernameSetup({ initialDisplayName = "" }: UsernameSetupProps) {
         router.push("/dashboard");
       } else if (res.status === 409) {
         setErrorMessage("Username already taken.");
+        setAvailability("taken");
       } else if (res.status === 403) {
         setErrorMessage("Username is already set.");
         router.push("/dashboard");
@@ -102,6 +146,17 @@ export function UsernameSetup({ initialDisplayName = "" }: UsernameSetupProps) {
           />
           {validationError && (
             <p className="text-xs text-destructive/80">{validationError}</p>
+          )}
+          {!validationError && availability === "checking" && (
+            <p className="text-xs text-muted-foreground/50">checking...</p>
+          )}
+          {!validationError && availability === "available" && (
+            <p className="text-xs text-neon-green">&gt; available</p>
+          )}
+          {!validationError && availability === "taken" && (
+            <p className="text-xs text-destructive/80">
+              &gt; username already taken
+            </p>
           )}
         </div>
 

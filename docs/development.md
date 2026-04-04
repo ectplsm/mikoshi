@@ -186,6 +186,19 @@ node scripts/upload-memory.mjs \
   --passphrase your-passphrase
 ```
 
+### Overwrite remote persona with local SOUL.md and IDENTITY.md
+
+```bash
+node scripts/update-persona.mjs \
+  --engram-dir path/to/engram \
+  --engram-id eng_XXXX \
+  --api-key YOUR_API_KEY \
+  --expected-remote-persona-hash sha256:REMOTE_PERSONA_HASH
+```
+
+Use `scripts/check-sync-status.mjs` first to fetch the current remote persona hash.
+If that hash changes before the write lands, the endpoint returns `409 Conflict`.
+
 ### Check sync status against local tokens
 
 ```bash
@@ -216,6 +229,13 @@ node scripts/hash-memory.mjs \
 2. Compute the local memory content hash with `scripts/hash-memory.mjs`
 3. Call `scripts/check-sync-status.mjs` with both local tokens
 4. Inspect `overall`, `persona.state`, and `memory.state`
+
+### Manual persona overwrite flow
+
+1. Call `scripts/check-sync-status.mjs` and note `remote.persona.token.hash`
+2. If `persona.state` is `different`, decide explicitly whether local should overwrite cloud
+3. Run `scripts/update-persona.mjs` with that remote hash as `--expected-remote-persona-hash`
+4. Re-run `scripts/check-sync-status.mjs` to confirm `persona.state` returns to `match`
 
 ## Useful Commands
 

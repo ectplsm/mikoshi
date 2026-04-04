@@ -1,6 +1,8 @@
 import {
   EngramSyncStatusResponse,
   type EngramSyncStatusResponseType,
+  UpdatePersonaResponse,
+  type UpdatePersonaResponseType,
 } from "@/lib/schemas/engram";
 import {
   compareSyncStatus,
@@ -16,7 +18,18 @@ export type MikoshiSyncClientConfig = {
 
 type ApiErrorBody = {
   error?: string;
+  code?: string;
+  currentPersona?: {
+    hash: string;
+    updatedAt: string;
+  };
   details?: unknown;
+};
+
+export type UpdatePersonaRequest = {
+  soul: string;
+  identity: string;
+  expectedRemotePersonaHash: string;
 };
 
 export class MikoshiApiError extends Error {
@@ -43,7 +56,7 @@ async function parseJsonResponse(response: Response) {
     throw new MikoshiApiError(
       response.status,
       errorBody.error ?? `HTTP ${response.status}`,
-      errorBody.details
+      errorBody.details ?? body
     );
   }
 
@@ -84,4 +97,26 @@ export async function fetchAndCompareSyncStatus(
 ): Promise<SyncComparisonResult> {
   const remote = await fetchSyncStatus(config, engramId);
   return compareSyncStatus(remote, local);
+}
+
+export async function updatePersona(
+  config: MikoshiSyncClientConfig,
+  engramId: string,
+  input: UpdatePersonaRequest
+): Promise<UpdatePersonaResponseType> {
+  const fetchFn = getFetchImpl(config.fetchImpl);
+  const response = await fetchFn(
+    buildUrl(config.baseUrl, `/api/v1/engrams/${engramId}/persona`),
+    {
+      method: "PUT",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify(input),
+    }
+  );
+
+  return UpdatePersonaResponse.parse(await parseJsonResponse(response));
 }

@@ -28,6 +28,26 @@ export const UpdateEngramSchema = z.object({
   tags: z.array(z.string().max(30)).max(10).optional(),
 });
 
+export const UpdatePersonaSchema = z.object({
+  soul: z.string().min(1, "SOUL.md content is required"),
+  identity: z.string().min(1, "IDENTITY.md content is required"),
+  expectedRemotePersonaHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+});
+
+export const UpdatePersonaResponse = z.object({
+  engramId: z.string(),
+  persona: z.object({
+    hash: z.string().regex(
+      /^sha256:[0-9a-f]{64}$/,
+      "Must be sha256:<64 hex chars>"
+    ),
+    updatedAt: z.string().datetime(),
+  }),
+});
+
 export const PersonaFileResponse = z.object({
   fileType: PersonaFileTypeSchema,
   filename: z.string(),
@@ -173,6 +193,8 @@ export type MemoryManifest = z.infer<typeof MemoryManifestSchema>;
 
 export type CreateEngramInput = z.infer<typeof CreateEngramSchema>;
 export type UpdateEngramInput = z.infer<typeof UpdateEngramSchema>;
+export type UpdatePersonaInput = z.infer<typeof UpdatePersonaSchema>;
+export type UpdatePersonaResponseType = z.infer<typeof UpdatePersonaResponse>;
 export type EngramResponseType = z.infer<typeof EngramResponse>;
 export type EngramSyncStatusResponseType = z.infer<typeof EngramSyncStatusResponse>;
 export type SyncComparisonStateType = z.infer<typeof SyncComparisonState>;

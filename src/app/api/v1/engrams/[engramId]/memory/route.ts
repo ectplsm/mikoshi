@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authenticateRequest } from "@/lib/auth-helpers";
 import { db } from "@/lib/db";
-import { MemoryUploadSchema } from "@/lib/schemas/engram";
+import { DeleteMemorySchema, MemoryUploadSchema } from "@/lib/schemas/engram";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { Prisma } from "@/generated/prisma/client";
 import {
@@ -243,19 +243,41 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     const authed = await authenticateRequest(request);
     if (!authed) return unauthorized();
 
+    const contentType = request.headers.get("content-type") ?? "";
+    if (!contentType.includes("application/json")) {
+      return err("Content-Type must be application/json", 415);
+    }
+
     const resolved = await resolveOwnedEngram(engramId, authed.userId);
     if ("error" in resolved) {
       return resolved.error === "not_found" ? notFound() : forbidden();
     }
 
+    const body = await request.json();
+    const input = DeleteMemorySchema.parse(body);
+
     const blob = await db.engramMemoryBlob.findUnique({
       where: { engramId },
-      select: { id: true },
+      select: {
+        memoryContentHash: true,
+      },
     });
 
     if (!blob) return notFound();
+    if (blob.memoryContentHash !== input.expectedRemoteMemoryContentHash) {
+      return memoryConflict(await getCurrentMemoryToken(engramId));
+    }
 
-    await db.engramMemoryBlob.delete({ where: { engramId } });
+    const result = await db.engramMemoryBlob.deleteMany({
+      where: {
+        engramId,
+        memoryContentHash: input.expectedRemoteMemoryContentHash,
+      },
+    });
+
+    if (result.count === 0) {
+      return memoryConflict(await getCurrentMemoryToken(engramId));
+    }
 
     return ok({ deleted: true });
   } catch (error) {

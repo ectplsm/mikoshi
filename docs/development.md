@@ -241,6 +241,21 @@ node scripts/hash-memory.mjs \
 3. For later uploads, pass the last observed remote memory hash to `scripts/upload-memory.mjs`
 4. Re-run `scripts/check-sync-status.mjs` to confirm `memory.state` returns to `match`
 
+### Delete remote memory safely
+
+Use the last observed remote memory hash as a delete precondition.
+
+```bash
+curl -X DELETE http://localhost:3000/api/v1/engrams/eng_XXXX/memory \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "expectedRemoteMemoryContentHash": "sha256:REMOTE_MEMORY_HASH"
+  }'
+```
+
+If the remote memory hash changed before the delete lands, the endpoint returns `409 Conflict`.
+
 ### Manual persona overwrite flow
 
 1. Call `scripts/check-sync-status.mjs` and note `remote.persona.token.hash`

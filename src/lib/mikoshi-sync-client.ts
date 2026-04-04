@@ -1,4 +1,6 @@
 import {
+  DeleteMemoryResponse,
+  type DeleteMemoryResponseType,
   EngramSyncStatusResponse,
   type EngramSyncStatusResponseType,
   MemoryUploadResponse,
@@ -64,6 +66,10 @@ export type UploadMemoryRequest = {
   expectedRemoteMemoryContentHash: string | null;
   memoryContentHash: string;
   bundleHash: string;
+};
+
+export type DeleteMemoryRequest = {
+  expectedRemoteMemoryContentHash: string;
 };
 
 export class MikoshiApiError extends Error {
@@ -175,4 +181,26 @@ export async function uploadMemory(
   );
 
   return MemoryUploadResponse.parse(await parseJsonResponse(response));
+}
+
+export async function deleteMemory(
+  config: MikoshiSyncClientConfig,
+  engramId: string,
+  input: DeleteMemoryRequest
+): Promise<DeleteMemoryResponseType> {
+  const fetchFn = getFetchImpl(config.fetchImpl);
+  const response = await fetchFn(
+    buildUrl(config.baseUrl, `/api/v1/engrams/${engramId}/memory`),
+    {
+      method: "DELETE",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${config.apiKey}`,
+      },
+      body: JSON.stringify(input),
+    }
+  );
+
+  return DeleteMemoryResponse.parse(await parseJsonResponse(response));
 }

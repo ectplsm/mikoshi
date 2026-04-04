@@ -206,8 +206,21 @@ export const MemoryUploadResponse = z.object({
   updatedAt: z.string().datetime(),
 });
 
+export const DeleteMemorySchema = z.object({
+  expectedRemoteMemoryContentHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+});
+
+export const DeleteMemoryResponse = z.object({
+  deleted: z.literal(true),
+});
+
 export type MemoryUploadInput = z.infer<typeof MemoryUploadSchema>;
 export type MemoryUploadResponseType = z.infer<typeof MemoryUploadResponse>;
+export type DeleteMemoryInput = z.infer<typeof DeleteMemorySchema>;
+export type DeleteMemoryResponseType = z.infer<typeof DeleteMemoryResponse>;
 export type MemoryManifest = z.infer<typeof MemoryManifestSchema>;
 
 export type CreateEngramInput = z.infer<typeof CreateEngramSchema>;

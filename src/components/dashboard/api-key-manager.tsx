@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { TerminalCard } from "@/components/ui/terminal-card";
 import { NeonButton } from "@/components/ui/neon-button";
+import { formatDateUtc } from "@/lib/utils";
 
 interface ApiKeyItem {
   id: string;
@@ -120,7 +121,7 @@ export function ApiKeyManager() {
               <div className="flex items-center gap-3">
                 <span className="text-muted-foreground/50">
                   {key.lastUsedAt
-                    ? `used ${new Date(key.lastUsedAt).toLocaleDateString("en-US")}`
+                    ? `used ${formatDateUtc(key.lastUsedAt)}`
                     : "never used"}
                 </span>
                 <button

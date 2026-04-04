@@ -5,6 +5,7 @@ import { Header } from "@/components/layout/header";
 import { EngramCard } from "@/components/dashboard/engram-card";
 import { TerminalCard } from "@/components/ui/terminal-card";
 import { Visibility } from "@/generated/prisma/enums";
+import { formatDateUtc } from "@/lib/utils";
 
 interface PageProps {
   params: Promise<{ username: string }>;
@@ -46,7 +47,7 @@ export default async function ProfilePage({ params }: PageProps) {
               <h1 className="text-xl font-bold">{user.name ?? user.username}</h1>
               <p className="text-sm text-brand">@{user.username}</p>
               <p className="text-xs text-muted-foreground/50 mt-1">
-                member since {user.createdAt.toLocaleDateString("en-US")}
+                member since {formatDateUtc(user.createdAt)}
               </p>
             </div>
           </div>

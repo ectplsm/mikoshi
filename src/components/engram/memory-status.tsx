@@ -1,4 +1,5 @@
 import { TerminalCard } from "@/components/ui/terminal-card";
+import { formatDateUtc } from "@/lib/utils";
 
 interface MemoryStatusProps {
   hasMemory: boolean;
@@ -65,7 +66,7 @@ export function MemoryStatus({
           {memoryUpdatedAt && (
             <>
               <span>last synced</span>
-              <span>{new Date(memoryUpdatedAt).toLocaleDateString("en-US")}</span>
+              <span>{formatDateUtc(memoryUpdatedAt)}</span>
             </>
           )}
         </div>

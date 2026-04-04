@@ -10,6 +10,7 @@ import { TerminalCard } from "@/components/ui/terminal-card";
 import { MemoryStatus } from "@/components/engram/memory-status";
 import { EngramActions } from "./actions";
 import { Visibility } from "@/generated/prisma/enums";
+import { formatDateUtc } from "@/lib/utils";
 
 interface PageProps {
   params: Promise<{ engramId: string }>;
@@ -78,11 +79,11 @@ export default async function EngramPage({ params }: PageProps) {
                 </span>
                 <span>
                   created{" "}
-                  {engram.createdAt.toLocaleDateString("en-US")}
+                  {formatDateUtc(engram.createdAt)}
                 </span>
                 <span>
                   updated{" "}
-                  {engram.updatedAt.toLocaleDateString("en-US")}
+                  {formatDateUtc(engram.updatedAt)}
                 </span>
               </div>
               {engram.tags.length > 0 && (

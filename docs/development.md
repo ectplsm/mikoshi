@@ -30,7 +30,7 @@ The entire app depends on PostgreSQL via Prisma. Without it, nothing renders.
 ### .env
 
 ```
-DATABASE_URL="postgresql://user:password@ep-xxx.region.neon.tech/dbname?sslmode=require"
+DATABASE_URL="postgresql://user:password@ep-xxx.region.neon.tech/dbname?sslmode=verify-full"
 ```
 
 ### Neon free tier notes
@@ -47,6 +47,9 @@ If you prefer a local DB instead of Neon:
 - Homebrew: `brew install postgresql@17 && brew services start postgresql@17 && createdb mikoshi`
 
 In that case: `DATABASE_URL="postgresql://postgres:postgres@localhost:5432/mikoshi"`
+
+If you are using Neon or another managed PostgreSQL service over TLS, prefer `sslmode=verify-full`.
+That matches the behavior currently assumed by `pg-connection-string` and avoids the runtime warning emitted for `sslmode=require`.
 
 ## 2. Prisma Setup (REQUIRED)
 

@@ -3,6 +3,7 @@ import { GlitchText } from "@/components/ui/glitch-text";
 import { TerminalCard } from "@/components/ui/terminal-card";
 import { auth, signIn } from "@/lib/auth";
 import { NeonButton } from "@/components/ui/neon-button";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const HERO_LOGO = [
@@ -59,17 +60,34 @@ export default async function Home() {
             <div className="space-y-3 text-sm">
               <p className="text-muted-foreground">
                 <span className="text-brand">&gt;</span> Mikoshi is a cloud
-                fortress for storing, sharing, and managing AI persona data
-                (Engrams).
+                service for storing and sharing AI Engrams
+                (persona and memory), designed to work with{" "}
+                <Link
+                  href="https://github.com/ectplsm/relic"
+                  className="text-brand hover:underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Relic
+                </Link>{" "}
+                (a CLI tool for Engram injection).
               </p>
               <p className="text-muted-foreground">
                 <span className="text-brand">&gt;</span> Upload your Engram
-                via CLI or Web UI. Share with the world or keep it private.
+                via CLI. Share with the world or keep it private.
               </p>
               <p className="text-muted-foreground">
                 <span className="text-brand">&gt;</span> Clone public
-                Engrams from other hackers.
+                Engrams from other users.
               </p>
+              <div className="pt-1">
+                <p className="text-xs text-muted-foreground/70 mb-1">
+                  Get started with Relic:
+                </p>
+                <code className="inline-block text-xs text-brand border border-brand/25 bg-brand/5 rounded-sm px-2 py-1 select-all">
+                  npm install -g @ectplsm/relic
+                </code>
+              </div>
             </div>
           </TerminalCard>
 
@@ -92,7 +110,7 @@ export default async function Home() {
           </TerminalCard>
 
           <div className="text-center text-xs text-muted-foreground/50 font-mono">
-            PROJECT RELIC // mikoshi.ectplsm.com // v0.1.0
+            Copyright © 2026 Ectplsm Lab
           </div>
         </div>
       </main>

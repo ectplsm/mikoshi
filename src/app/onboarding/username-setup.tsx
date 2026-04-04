@@ -22,9 +22,14 @@ function usernameErrorMessage(
   }
 }
 
-export function UsernameSetup() {
+interface UsernameSetupProps {
+  initialDisplayName?: string;
+}
+
+export function UsernameSetup({ initialDisplayName = "" }: UsernameSetupProps) {
   const router = useRouter();
   const [username, setUsername] = useState("");
+  const [displayName, setDisplayName] = useState(initialDisplayName);
   const [saving, setSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -39,10 +44,15 @@ export function UsernameSetup() {
     setErrorMessage(null);
 
     try {
+      const body: Record<string, string> = { username };
+      if (displayName.trim()) {
+        body.displayName = displayName.trim();
+      }
+
       const res = await fetch("/api/v1/me/profile", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username }),
+        body: JSON.stringify(body),
       });
 
       if (res.ok) {
@@ -61,37 +71,57 @@ export function UsernameSetup() {
     } finally {
       setSaving(false);
     }
-  }, [canSave, username, router]);
+  }, [canSave, username, displayName, router]);
 
   return (
     <TerminalCard variant="brand">
       <div className="space-y-5">
-        {/* URL preview */}
-        <div className="text-xs text-muted-foreground">
-          <span className="text-muted-foreground/50">&gt; profile url: </span>
-          <span className="text-foreground font-mono">
-            /@{username || "..."}
-          </span>
+        {/* Username section */}
+        <div className="space-y-2">
+          <div className="text-xs text-muted-foreground font-medium">
+            Username
+          </div>
+          <div className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground/50">
+              &gt; profile url:{" "}
+            </span>
+            <span className="text-foreground font-mono">
+              /@{username || "..."}
+            </span>
+          </div>
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => {
+              setUsername(e.target.value.toLowerCase());
+              setErrorMessage(null);
+            }}
+            placeholder="your-username"
+            autoFocus
+            className="w-full bg-input border border-border rounded-sm px-3 py-2 text-sm font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-brand/60"
+          />
+          {validationError && (
+            <p className="text-xs text-destructive/80">{validationError}</p>
+          )}
         </div>
 
-        {/* Input */}
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => {
-            setUsername(e.target.value.toLowerCase());
-            setErrorMessage(null);
-          }}
-          placeholder="your-username"
-          autoFocus
-          className="w-full bg-input border border-border rounded-sm px-3 py-2 text-sm font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-brand/60"
-          onKeyDown={(e) => e.key === "Enter" && confirm()}
-        />
-
-        {/* Validation hint */}
-        {validationError && (
-          <p className="text-xs text-destructive/80">{validationError}</p>
-        )}
+        {/* Display name section */}
+        <div className="space-y-2">
+          <div className="text-xs text-muted-foreground font-medium">
+            Display Name
+            <span className="text-muted-foreground/50 ml-1">(optional)</span>
+          </div>
+          <input
+            type="text"
+            value={displayName}
+            onChange={(e) => setDisplayName(e.target.value)}
+            placeholder="Your display name"
+            className="w-full bg-input border border-border rounded-sm px-3 py-2 text-sm font-mono text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-brand/60"
+          />
+          <p className="text-xs text-muted-foreground/50">
+            You can change this later in Settings.
+          </p>
+        </div>
 
         {/* API error */}
         {errorMessage && (
@@ -101,7 +131,7 @@ export function UsernameSetup() {
         {/* Warning */}
         <div className="border border-amber-500/30 bg-amber-500/5 rounded-sm px-3 py-2">
           <p className="text-xs text-amber-500/90">
-            This username is permanent and cannot be changed later.
+            Username is permanent and cannot be changed later.
           </p>
         </div>
 
@@ -113,7 +143,7 @@ export function UsernameSetup() {
           disabled={!canSave}
           className="w-full"
         >
-          {saving ? "confirming..." : "confirm username"}
+          {saving ? "confirming..." : "confirm"}
         </NeonButton>
       </div>
     </TerminalCard>

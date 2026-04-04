@@ -26,7 +26,7 @@ export default async function OnboardingPage() {
         </div>
 
         {/* Username form */}
-        <UsernameSetup />
+        <UsernameSetup initialDisplayName={session.user.name ?? ""} />
       </div>
     </div>
   );

@@ -233,4 +233,13 @@ Do not duplicate Relic's local-only responsibilities inside Mikoshi.
 - Prefer root-cause fixes over UI band-aids
 - Do not claim "complete compatibility" unless it is literally defensible
 
+## 13. GitHub CLI / PR Workflow
+
+When creating or editing GitHub pull requests from Codex:
+
+- prefer using `gh` with external permissions outside the sandbox
+- do not assume sandbox-local `gh auth status` reflects the user's real authenticated session
+- if PR creation or PR editing needs GitHub CLI, escalate and use the user's outer `gh` environment instead of treating sandbox auth failure as a product blocker
+- keep PRs as draft by default unless the user explicitly asks for ready-for-review
+
 When in doubt, choose the design that keeps data ownership, sync boundaries, and privacy rules obvious.

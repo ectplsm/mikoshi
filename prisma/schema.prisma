@@ -115,6 +115,7 @@ model EngramMemoryBlob {
   kdfSalt          Bytes
   kdfParamsJson    Json     // { N, r, p, dkLen }
   manifestJson     Json     // { payloadKind, bundleVersion, hasUserFile, ... }
+  memoryContentHash String  // "sha256:<hex>" derived from canonical plaintext memory files
   bundleHash       String   // "sha256:<hex>"
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt

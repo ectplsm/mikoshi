@@ -28,6 +28,26 @@ export const UpdateEngramSchema = z.object({
   tags: z.array(z.string().max(30)).max(10).optional(),
 });
 
+export const UpdatePersonaSchema = z.object({
+  soul: z.string().min(1, "SOUL.md content is required"),
+  identity: z.string().min(1, "IDENTITY.md content is required"),
+  expectedRemotePersonaHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+});
+
+export const UpdatePersonaResponse = z.object({
+  engramId: z.string(),
+  persona: z.object({
+    hash: z.string().regex(
+      /^sha256:[0-9a-f]{64}$/,
+      "Must be sha256:<64 hex chars>"
+    ),
+    updatedAt: z.string().datetime(),
+  }),
+});
+
 export const PersonaFileResponse = z.object({
   fileType: PersonaFileTypeSchema,
   filename: z.string(),
@@ -42,6 +62,70 @@ export const MemorySummary = z.object({
   latestMemoryDate: z.string().nullable().optional(),
   memoryUpdatedAt: z.string().nullable().optional(),
 });
+
+export const PersonaSyncToken = z.object({
+  hash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+  updatedAt: z.string().datetime(),
+});
+
+export const PersonaSyncStatus = z.object({
+  exists: z.boolean(),
+  token: PersonaSyncToken.nullable(),
+  files: z.object({
+    hasSoul: z.boolean(),
+    hasIdentity: z.boolean(),
+  }),
+});
+
+export const MemorySyncToken = z.object({
+  memoryContentHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+  bundleHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+  version: z.number().int().positive(),
+  updatedAt: z.string().datetime(),
+});
+
+export const MemorySyncSummary = z.object({
+  hasUserFile: z.boolean(),
+  hasMemoryIndex: z.boolean(),
+  memoryEntryCount: z.number().int().min(0),
+  latestMemoryDate: z.string().nullable(),
+});
+
+export const MemorySyncStatus = z.object({
+  exists: z.boolean(),
+  token: MemorySyncToken.nullable(),
+  summary: MemorySyncSummary.nullable(),
+});
+
+export const EngramSyncStatusResponse = z.object({
+  engramId: z.string(),
+  persona: PersonaSyncStatus,
+  memory: MemorySyncStatus,
+});
+
+export const SyncComparisonState = z.enum([
+  "match",
+  "different",
+  "local_unavailable",
+  "remote_unavailable",
+]);
+
+export const OverallDriftClass = z.enum([
+  "clean",
+  "persona",
+  "memory",
+  "mixed",
+  "incomplete",
+]);
 
 export const EngramResponse = z.object({
   id: z.string(),
@@ -94,15 +178,56 @@ export const MemoryUploadSchema = z.object({
   kdfSalt: base64,
   kdfParams: ScryptParamsSchema,
   manifest: MemoryManifestSchema,
+  expectedRemoteMemoryContentHash: z
+    .string()
+    .regex(/^sha256:[0-9a-f]{64}$/, "Must be sha256:<64 hex chars>")
+    .nullable(),
+  memoryContentHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
   bundleHash: z.string().regex(
     /^sha256:[0-9a-f]{64}$/,
     "Must be sha256:<64 hex chars>"
   ),
 });
 
+export const MemoryUploadResponse = z.object({
+  engramId: z.string(),
+  version: z.number().int().positive(),
+  memoryContentHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+  bundleHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+  updatedAt: z.string().datetime(),
+});
+
+export const DeleteMemorySchema = z.object({
+  expectedRemoteMemoryContentHash: z.string().regex(
+    /^sha256:[0-9a-f]{64}$/,
+    "Must be sha256:<64 hex chars>"
+  ),
+});
+
+export const DeleteMemoryResponse = z.object({
+  deleted: z.literal(true),
+});
+
 export type MemoryUploadInput = z.infer<typeof MemoryUploadSchema>;
+export type MemoryUploadResponseType = z.infer<typeof MemoryUploadResponse>;
+export type DeleteMemoryInput = z.infer<typeof DeleteMemorySchema>;
+export type DeleteMemoryResponseType = z.infer<typeof DeleteMemoryResponse>;
 export type MemoryManifest = z.infer<typeof MemoryManifestSchema>;
 
 export type CreateEngramInput = z.infer<typeof CreateEngramSchema>;
 export type UpdateEngramInput = z.infer<typeof UpdateEngramSchema>;
+export type UpdatePersonaInput = z.infer<typeof UpdatePersonaSchema>;
+export type UpdatePersonaResponseType = z.infer<typeof UpdatePersonaResponse>;
 export type EngramResponseType = z.infer<typeof EngramResponse>;
+export type EngramSyncStatusResponseType = z.infer<typeof EngramSyncStatusResponse>;
+export type SyncComparisonStateType = z.infer<typeof SyncComparisonState>;
+export type OverallDriftClassType = z.infer<typeof OverallDriftClass>;

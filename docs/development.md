@@ -183,8 +183,85 @@ node scripts/upload-memory.mjs \
   --engram-dir path/to/engram \
   --engram-id eng_XXXX \
   --api-key YOUR_API_KEY \
+  --expected-remote-memory-content-hash sha256:REMOTE_MEMORY_HASH \
   --passphrase your-passphrase
 ```
+
+Use `null` for the first upload when the Engram has no remote memory yet.
+If the remote memory hash changes before the write lands, the endpoint returns `409 Conflict`.
+
+### Overwrite remote persona with local SOUL.md and IDENTITY.md
+
+```bash
+node scripts/update-persona.mjs \
+  --engram-dir path/to/engram \
+  --engram-id eng_XXXX \
+  --api-key YOUR_API_KEY \
+  --expected-remote-persona-hash sha256:REMOTE_PERSONA_HASH
+```
+
+Use `scripts/check-sync-status.mjs` first to fetch the current remote persona hash.
+If that hash changes before the write lands, the endpoint returns `409 Conflict`.
+
+### Check sync status against local tokens
+
+```bash
+node scripts/check-sync-status.mjs \
+  --engram-id eng_XXXX \
+  --api-key YOUR_API_KEY \
+  --persona-hash sha256:YOUR_PERSONA_HASH \
+  --memory-content-hash sha256:YOUR_MEMORY_CONTENT_HASH
+```
+
+### Compute a local persona hash
+
+```bash
+node scripts/hash-persona.mjs \
+  --engram-dir ~/.relic/engrams/rebel
+```
+
+### Compute a local memory content hash
+
+```bash
+node scripts/hash-memory.mjs \
+  --engram-dir ~/.relic/engrams/rebel
+```
+
+### Manual sync-status flow
+
+1. Compute the local persona hash with `scripts/hash-persona.mjs`
+2. Compute the local memory content hash with `scripts/hash-memory.mjs`
+3. Call `scripts/check-sync-status.mjs` with both local tokens
+4. Inspect `overall`, `persona.state`, and `memory.state`
+
+### Manual memory overwrite flow
+
+1. Call `scripts/check-sync-status.mjs` and note `remote.memory.token.memoryContentHash`
+2. For the first memory upload, pass `--expected-remote-memory-content-hash null`
+3. For later uploads, pass the last observed remote memory hash to `scripts/upload-memory.mjs`
+4. Re-run `scripts/check-sync-status.mjs` to confirm `memory.state` returns to `match`
+
+### Delete remote memory safely
+
+Use the last observed remote memory hash as a delete precondition.
+
+```bash
+curl -X DELETE http://localhost:3000/api/v1/engrams/eng_XXXX/memory \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -d '{
+    "expectedRemoteMemoryContentHash": "sha256:REMOTE_MEMORY_HASH"
+  }'
+```
+
+If the remote memory hash changed before the delete lands, the endpoint returns `409 Conflict`.
+
+### Manual persona overwrite flow
+
+1. Call `scripts/check-sync-status.mjs` and note `remote.persona.token.hash`
+2. If `persona.state` is `different`, decide explicitly whether local should overwrite cloud
+3. Run `scripts/update-persona.mjs` with that remote hash as `--expected-remote-persona-hash`
+4. Re-run `scripts/check-sync-status.mjs` to confirm `persona.state` returns to `match`
 
 ## Useful Commands
 

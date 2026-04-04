@@ -7,6 +7,7 @@
  *     --engram-dir ~/.relic/engrams/rebel \
  *     --engram-id <mikoshi-engram-id> \
  *     --api-key <your-api-key> \
+ *     --expected-remote-memory-content-hash sha256:...|null \
  *     --passphrase <encryption-passphrase> \
  *     [--base-url http://localhost:3000]
  */
@@ -14,6 +15,8 @@
 import { readFileSync, readdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { createHash, randomBytes, scryptSync, createCipheriv } from "node:crypto";
+
+const MEMORY_HASH_VERSION = "mikoshi.memory.v1";
 
 // ─── CLI args ───
 
@@ -27,10 +30,18 @@ const engramDir = arg("engram-dir");
 const engramId = arg("engram-id");
 const apiKey = arg("api-key");
 const passphrase = arg("passphrase");
+const expectedRemoteMemoryContentHashArg = arg("expected-remote-memory-content-hash");
 const baseUrl = arg("base-url") ?? "http://localhost:3000";
+const expectedRemoteMemoryContentHash =
+  expectedRemoteMemoryContentHashArg === undefined ||
+  expectedRemoteMemoryContentHashArg === "null"
+    ? null
+    : expectedRemoteMemoryContentHashArg;
 
 if (!engramDir || !engramId || !apiKey || !passphrase) {
-  console.error("Usage: node scripts/upload-memory.mjs --engram-dir <dir> --engram-id <id> --api-key <key> --passphrase <pass>");
+  console.error(
+    "Usage: node scripts/upload-memory.mjs --engram-dir <dir> --engram-id <id> --api-key <key> --passphrase <pass> [--expected-remote-memory-content-hash sha256:...|null]"
+  );
   process.exit(1);
 }
 
@@ -64,6 +75,26 @@ if (fileCount === 0) {
 }
 
 console.log(`Found ${fileCount} memory files`);
+
+function normalizeMemoryText(content) {
+  return content
+    .replace(/^\uFEFF/, "")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n");
+}
+
+function buildMemoryCanonicalPayload(inputFiles) {
+  const entries = Object.entries(inputFiles)
+    .filter(([path]) => path === "USER.md" || path === "MEMORY.md" || path.startsWith("memory/"))
+    .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+    .map(([path, content]) => {
+      const normalized = normalizeMemoryText(content);
+      return [path, String(Buffer.byteLength(normalized, "utf8")), normalized];
+    })
+    .flat();
+
+  return [MEMORY_HASH_VERSION, ...entries].join("\n");
+}
 
 // ─── Build plaintext bundle ───
 
@@ -103,6 +134,8 @@ const ciphertext = Buffer.concat([encrypted, authTag]);
 
 // ─── Hash ───
 
+const memoryContentHash =
+  "sha256:" + createHash("sha256").update(buildMemoryCanonicalPayload(files)).digest("hex");
 const bundleHash = "sha256:" + createHash("sha256").update(ciphertext).digest("hex");
 
 // ─── Build manifest ───
@@ -131,6 +164,8 @@ const payload = {
   kdfSalt: kdfSalt.toString("base64"),
   kdfParams,
   manifest,
+  expectedRemoteMemoryContentHash,
+  memoryContentHash,
   bundleHash,
 };
 

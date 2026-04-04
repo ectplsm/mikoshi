@@ -14,7 +14,7 @@ export function MemoryStatus({
 }: MemoryStatusProps) {
   if (!hasMemory) {
     return (
-      <TerminalCard title="memory.status">
+      <TerminalCard title="Memory Status">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span className="text-neon-yellow/60">&#9679;</span>
           <span>No encrypted memory uploaded</span>
@@ -35,7 +35,7 @@ export function MemoryStatus({
   const hasMemoryIndex = manifest?.hasMemoryIndex === true;
 
   return (
-    <TerminalCard title="memory.status">
+    <TerminalCard title="Memory Status">
       <div className="space-y-2 text-sm">
         <div className="flex items-center gap-2">
           <span className="text-neon-green">&#9679;</span>

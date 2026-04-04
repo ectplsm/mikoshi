@@ -31,7 +31,7 @@ export default async function ProfilePage({ params }: PageProps) {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
-        <TerminalCard title={`user.profile @${user.username}`} variant="brand">
+        <TerminalCard title="Profile" variant="brand">
           <div className="flex items-center gap-4">
             {user.image && (
               <Image

@@ -18,7 +18,7 @@ export function EngramViewer({ files }: EngramViewerProps) {
 
   if (files.length === 0) {
     return (
-      <TerminalCard title="files.empty">
+      <TerminalCard title="Files">
         <p className="text-sm text-muted-foreground">
           &gt; No files available to display.
         </p>
@@ -48,7 +48,7 @@ export function EngramViewer({ files }: EngramViewerProps) {
       </div>
 
       {/* Content */}
-      <TerminalCard title={`cat ${activeFile.filename}`} variant="brand">
+      <TerminalCard title={activeFile.filename} variant="brand">
         <pre className="text-sm text-foreground/90 whitespace-pre-wrap break-words overflow-x-auto max-h-[600px] overflow-y-auto">
           {activeFile.content}
         </pre>

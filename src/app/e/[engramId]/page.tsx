@@ -45,7 +45,7 @@ export default async function EngramPage({ params }: PageProps) {
       <Header />
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
         {/* Engram header */}
-        <TerminalCard title={`engram.inspect ${engram.id}`} variant="brand">
+        <TerminalCard title="Engram Details" variant="brand">
           <div className="flex items-start gap-4">
             {engram.avatarUrl && (
               <Image

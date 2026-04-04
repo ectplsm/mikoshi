@@ -60,7 +60,7 @@ export function ApiKeyManager() {
   };
 
   return (
-    <TerminalCard title="api_keys.manage" variant="brand">
+    <TerminalCard title="API Keys" variant="brand">
       <div className="space-y-4">
         {/* Create new key */}
         <div className="flex gap-2">

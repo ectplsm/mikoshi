@@ -39,7 +39,7 @@ export default async function Home() {
         </pre>
 
         <div className="max-w-xl w-full space-y-6">
-          <TerminalCard title="system.init" variant="brand">
+          <TerminalCard title="About Mikoshi" variant="brand">
             <div className="space-y-3 text-sm">
               <p className="text-muted-foreground">
                 <span className="text-brand">&gt;</span> Mikoshi is a cloud
@@ -57,7 +57,7 @@ export default async function Home() {
             </div>
           </TerminalCard>
 
-          <TerminalCard title="auth.connect" variant="brand">
+          <TerminalCard title="Sign In" variant="brand">
             <div className="flex flex-col items-center gap-4 py-4">
               <GlitchText as="p" className="text-lg text-foreground">
                 JACK IN TO THE SYSTEM

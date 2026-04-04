@@ -13,6 +13,19 @@ const HERO_LOGO = [
   "/_/  /_//___//_/ |_|\\____//____/_//_//___/  ",
 ].join("\n");
 
+const HERO_MARK = [
+  "                 ___  _ ___",
+  "                  \\ \\;|/ /",
+  "                   \\_  _/",
+  "             _.------||------._",
+  "            / _.------------._ \\",
+  "  ____     / / :::::@@@@::::: \\ \\     ____",
+  " / __ \\   / / :::::@@@@@@::::: \\ \\   / __ \\",
+  "/ / _| | / / :::::::@@@@::::::: \\ \\ | |_ \\ \\",
+  "\\ \\___/.' / :::::::::::::::::::: \\ `.\\___/ /",
+  " \\______.'()(__)(__)(__)(__)(__)()`.______/",
+].join("\n");
+
 const HERO_SUB = [
   "",
   "    CLOUD DATA FORTRESS",
@@ -31,6 +44,9 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 flex flex-col items-center justify-center px-4 scanlines">
+        <pre className="text-brand/70 text-[9px] sm:text-[10px] md:text-xs leading-tight mb-6 select-none overflow-x-auto max-w-full">
+          {HERO_MARK}
+        </pre>
         <pre className="text-brand glow-brand text-xs sm:text-sm md:text-base leading-tight mb-8 select-none overflow-x-auto max-w-full">
           {HERO_LOGO}
         </pre>

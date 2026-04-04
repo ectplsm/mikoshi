@@ -10,7 +10,7 @@ export async function Header() {
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         <Link
           href="/"
-          className="text-neon-cyan glow-cyan text-lg font-bold font-mono tracking-widest hover:text-neon-magenta transition-colors"
+          className="text-brand glow-brand text-lg font-bold font-mono tracking-widest hover:opacity-85 transition-opacity"
         >
           MIKOSHI
         </Link>
@@ -20,15 +20,21 @@ export async function Header() {
             <>
               <Link
                 href="/dashboard"
-                className="text-sm text-muted-foreground hover:text-neon-cyan transition-colors"
+                className="text-sm text-muted-foreground hover:text-brand transition-colors"
               >
                 dashboard
               </Link>
               <Link
                 href={`/@${(session.user as { username?: string }).username ?? ""}`}
-                className="text-sm text-muted-foreground hover:text-neon-cyan transition-colors"
+                className="text-sm text-muted-foreground hover:text-brand transition-colors"
               >
                 profile
+              </Link>
+              <Link
+                href="/settings"
+                className="text-sm text-muted-foreground hover:text-brand transition-colors"
+              >
+                settings
               </Link>
               <form
                 action={async () => {
@@ -36,7 +42,7 @@ export async function Header() {
                   await signOut();
                 }}
               >
-                <NeonButton variant="magenta" size="sm" type="submit">
+                <NeonButton variant="brand" size="sm" type="submit">
                   logout
                 </NeonButton>
               </form>
@@ -48,7 +54,7 @@ export async function Header() {
                 await signIn("google");
               }}
             >
-              <NeonButton variant="cyan" size="sm" type="submit">
+              <NeonButton variant="brand" size="sm" type="submit">
                 sign_in
               </NeonButton>
             </form>

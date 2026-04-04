@@ -3,6 +3,7 @@ import { GlitchText } from "@/components/ui/glitch-text";
 import { TerminalCard } from "@/components/ui/terminal-card";
 import { auth, signIn } from "@/lib/auth";
 import { NeonButton } from "@/components/ui/neon-button";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 
 const HERO_LOGO = [
@@ -11,6 +12,19 @@ const HERO_LOGO = [
   "  / /|_/ / / / / ,<  / / / /\\__ \\/ _  / / /  ",
   " / /  / /_/ / / /| |/ /_/ /___/ / // /_/ /  ",
   "/_/  /_//___//_/ |_|\\____//____/_//_//___/  ",
+].join("\n");
+
+const HERO_MARK = [
+  "                 ___  _ ___",
+  "                  \\ \\;|/ /",
+  "                   \\_  _/",
+  "             _.------||------._",
+  "            / _.------------._ \\",
+  "  ____     / / :::::@@@@::::: \\ \\     ____",
+  " / __ \\   / / :::::@@@@@@::::: \\ \\   / __ \\",
+  "/ / _| | / / :::::::@@@@::::::: \\ \\ | |_ \\ \\",
+  "\\ \\___/.' / :::::::::::::::::::: \\ `.\\___/ /",
+  " \\______.'()(__)(__)(__)(__)(__)()`.______/",
 ].join("\n");
 
 const HERO_SUB = [
@@ -31,7 +45,10 @@ export default async function Home() {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 flex flex-col items-center justify-center px-4 scanlines">
-        <pre className="text-neon-cyan glow-cyan text-xs sm:text-sm md:text-base leading-tight mb-8 select-none overflow-x-auto max-w-full">
+        <pre className="text-brand/70 text-[9px] sm:text-[10px] md:text-xs leading-tight mb-6 select-none overflow-x-auto max-w-full">
+          {HERO_MARK}
+        </pre>
+        <pre className="text-brand glow-brand text-xs sm:text-sm md:text-base leading-tight mb-8 select-none overflow-x-auto max-w-full">
           {HERO_LOGO}
         </pre>
         <pre className="text-muted-foreground text-xs sm:text-sm leading-relaxed mb-8 select-none">
@@ -39,25 +56,42 @@ export default async function Home() {
         </pre>
 
         <div className="max-w-xl w-full space-y-6">
-          <TerminalCard title="system.init" variant="cyan">
+          <TerminalCard title="About Mikoshi" variant="brand">
             <div className="space-y-3 text-sm">
               <p className="text-muted-foreground">
-                <span className="text-neon-cyan">&gt;</span> Mikoshi is a cloud
-                fortress for storing, sharing, and managing AI persona data
-                (Engrams).
+                <span className="text-brand">&gt;</span> Mikoshi is a cloud
+                service for storing and sharing AI Engrams
+                (persona and memory), designed to work with{" "}
+                <Link
+                  href="https://github.com/ectplsm/relic"
+                  className="text-brand hover:underline"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Relic
+                </Link>{" "}
+                (a CLI tool for Engram injection).
               </p>
               <p className="text-muted-foreground">
-                <span className="text-neon-cyan">&gt;</span> Upload your Engram
-                via CLI or Web UI. Share with the world or keep it private.
+                <span className="text-brand">&gt;</span> Upload your Engram
+                via CLI. Share with the world or keep it private.
               </p>
               <p className="text-muted-foreground">
-                <span className="text-neon-cyan">&gt;</span> Clone public
-                Engrams from other hackers.
+                <span className="text-brand">&gt;</span> Clone public
+                Engrams from other users.
               </p>
+              <div className="pt-1">
+                <p className="text-xs text-muted-foreground/70 mb-1">
+                  Get started with Relic:
+                </p>
+                <code className="inline-block text-xs text-brand border border-brand/25 bg-brand/5 rounded-sm px-2 py-1 select-all">
+                  npm install -g @ectplsm/relic
+                </code>
+              </div>
             </div>
           </TerminalCard>
 
-          <TerminalCard title="auth.connect" variant="magenta">
+          <TerminalCard title="Sign In" variant="brand">
             <div className="flex flex-col items-center gap-4 py-4">
               <GlitchText as="p" className="text-lg text-foreground">
                 JACK IN TO THE SYSTEM
@@ -68,7 +102,7 @@ export default async function Home() {
                   await signIn("google");
                 }}
               >
-                <NeonButton variant="cyan" size="lg" type="submit">
+                <NeonButton variant="brand" size="lg" type="submit">
                   [ SIGN IN WITH GOOGLE ]
                 </NeonButton>
               </form>
@@ -76,7 +110,7 @@ export default async function Home() {
           </TerminalCard>
 
           <div className="text-center text-xs text-muted-foreground/50 font-mono">
-            PROJECT RELIC // mikoshi.ectplsm.com // v0.1.0
+            Copyright © 2026 Ectplsm Lab
           </div>
         </div>
       </main>

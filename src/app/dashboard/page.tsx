@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { Header } from "@/components/layout/header";
 import { EngramCard } from "@/components/dashboard/engram-card";
-import { DashboardClient } from "./client";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -27,35 +26,33 @@ export default async function DashboardPage() {
           </span>
         </div>
 
-        <DashboardClient>
-          {engrams.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
-              {engrams.map((e) => (
-                <EngramCard
-                  key={e.id}
-                  id={e.id}
-                  name={e.name}
-                  description={e.description}
-                  visibility={e.visibility}
-                  tags={e.tags}
-                  avatarUrl={e.avatarUrl}
-                  updatedAt={e.updatedAt.toISOString()}
-                  hasMemory={!!e.memoryBlob}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-16 text-muted-foreground text-sm">
-              <pre className="text-brand/20 text-xs mb-4">
-                {`  ┌──────────────────┐
+        {engrams.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+            {engrams.map((e) => (
+              <EngramCard
+                key={e.id}
+                id={e.id}
+                name={e.name}
+                description={e.description}
+                visibility={e.visibility}
+                tags={e.tags}
+                avatarUrl={e.avatarUrl}
+                updatedAt={e.updatedAt.toISOString()}
+                hasMemory={!!e.memoryBlob}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-16 text-muted-foreground text-sm">
+            <pre className="text-brand/20 text-xs mb-4">
+              {`  ┌──────────────────┐
   │  NO ENGRAMS FOUND │
   │  upload your first │
   │  engram below      │
   └──────────────────┘`}
-              </pre>
-            </div>
-          )}
-        </DashboardClient>
+            </pre>
+          </div>
+        )}
       </main>
     </div>
   );

@@ -30,6 +30,12 @@ export async function Header() {
               >
                 profile
               </Link>
+              <Link
+                href="/settings"
+                className="text-sm text-muted-foreground hover:text-brand transition-colors"
+              >
+                settings
+              </Link>
               <form
                 action={async () => {
                   "use server";

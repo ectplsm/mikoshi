@@ -243,3 +243,9 @@ When creating or editing GitHub pull requests from Codex:
 - keep PRs as draft by default unless the user explicitly asks for ready-for-review
 
 When in doubt, choose the design that keeps data ownership, sync boundaries, and privacy rules obvious.
+
+## 14. Onboarding Gate
+
+Pages that require authentication must use `requireUsername()` from `src/lib/require-username.ts` instead of raw `auth()` checks.
+This redirects unauthenticated users to `/` and users without a confirmed username to `/onboarding`.
+Apply this to every new protected page.

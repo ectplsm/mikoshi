@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 
 interface NeonButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: "brand";
+  variant?: "brand" | "destructive" | "ghost" | "ghost-destructive";
   size?: "sm" | "md" | "lg";
 }
 
@@ -18,6 +18,12 @@ export function NeonButton({
   const colors = {
     brand:
       "border-brand/60 text-brand hover:bg-brand/10 hover:box-glow-brand",
+    destructive:
+      "border-destructive/60 text-destructive hover:bg-destructive/10",
+    ghost:
+      "border-transparent text-brand hover:bg-brand/10",
+    "ghost-destructive":
+      "border-transparent text-destructive hover:bg-destructive/10",
   }[variant];
 
   const sizes = {

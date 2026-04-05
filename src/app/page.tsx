@@ -45,7 +45,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center px-4 scanlines">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pt-8 md:pt-0 scanlines">
         <pre className="text-brand/70 text-[9px] sm:text-[10px] md:text-xs leading-tight mb-6 select-none overflow-x-auto max-w-full">
           {HERO_MARK}
         </pre>

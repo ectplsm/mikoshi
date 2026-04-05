@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { auth, signIn, signOut } from "@/lib/auth";
 import { NeonButton } from "@/components/ui/neon-button";
+import { MobileMenu } from "./mobile-menu";
 
 export async function Header() {
   const session = await auth();
@@ -15,9 +16,10 @@ export async function Header() {
           MIKOSHI
         </Link>
 
-        <nav className="flex items-center gap-4">
-          {session?.user ? (
-            <>
+        {session?.user ? (
+          <>
+            {/* Desktop nav */}
+            <nav className="hidden md:flex items-center gap-4">
               <Link
                 href="/dashboard"
                 className="text-sm text-muted-foreground hover:text-brand transition-colors"
@@ -46,20 +48,23 @@ export async function Header() {
                   logout
                 </NeonButton>
               </form>
-            </>
-          ) : (
-            <form
-              action={async () => {
-                "use server";
-                await signIn("google");
-              }}
-            >
-              <NeonButton variant="brand" size="sm" type="submit">
-                sign_in
-              </NeonButton>
-            </form>
-          )}
-        </nav>
+            </nav>
+
+            {/* Mobile menu */}
+            <MobileMenu username={session.user.username ?? ""} />
+          </>
+        ) : (
+          <form
+            action={async () => {
+              "use server";
+              await signIn("google");
+            }}
+          >
+            <NeonButton variant="brand" size="sm" type="submit">
+              sign_in
+            </NeonButton>
+          </form>
+        )}
       </div>
     </header>
   );

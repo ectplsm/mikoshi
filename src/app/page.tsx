@@ -90,10 +90,10 @@ export default async function Home() {
             </div>
           </TerminalCard>
 
-          <TerminalCard title="Sign In" variant="brand">
+          <TerminalCard title="Get Started" variant="brand">
             <div className="flex flex-col items-center gap-4 py-4">
               <GlitchText as="p" className="text-lg text-foreground">
-                JACK IN TO THE SYSTEM
+                CONTINUE TO MIKOSHI
               </GlitchText>
               <form
                 action={async () => {

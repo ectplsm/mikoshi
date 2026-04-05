@@ -8,7 +8,7 @@ import { EngramViewer } from "@/components/engram/engram-viewer";
 import { VisibilityBadge } from "@/components/ui/visibility-badge";
 import { TerminalCard } from "@/components/ui/terminal-card";
 import { MemoryStatus } from "@/components/engram/memory-status";
-import { EngramActions } from "./actions";
+import { EngramCardActions } from "./actions";
 import { Visibility } from "@/generated/prisma/enums";
 import { formatDateUtc } from "@/lib/utils";
 
@@ -45,70 +45,75 @@ export default async function EngramPage({ params }: PageProps) {
       <Header />
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
         {/* Engram header */}
-        <TerminalCard title="Engram Details" variant="brand">
-          <div className="flex items-start gap-4">
-            {engram.avatarUrl && (
-              <Image
-                src={engram.avatarUrl}
-                alt=""
-                className="w-16 h-16 rounded-sm border border-border object-cover"
-                width={64}
-                height={64}
-                unoptimized
+        <div className="relative">
+          <TerminalCard
+            title="Engram Details"
+            variant="brand"
+            titleActions={
+              <EngramCardActions
+                engramId={engram.id}
+                isOwner={isOwner}
+                isAuthenticated={!!session?.user}
+                visibility={engram.visibility}
               />
-            )}
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-xl font-bold">{engram.name}</h1>
-                <VisibilityBadge visibility={engram.visibility} />
-              </div>
-              {engram.description && (
-                <p className="text-sm text-muted-foreground mb-2">
-                  {engram.description}
-                </p>
+            }
+          >
+            <div className="flex items-start gap-4">
+              {engram.avatarUrl && (
+                <Image
+                  src={engram.avatarUrl}
+                  alt=""
+                  className="w-16 h-16 rounded-sm border border-border object-cover"
+                  width={64}
+                  height={64}
+                  unoptimized
+                />
               )}
-              <div className="flex items-center gap-4 text-xs text-muted-foreground/70">
-                <span>
-                  by{" "}
-                  <a
-                    href={`/@${engram.owner.username}`}
-                    className="text-brand hover:underline"
-                  >
-                    @{engram.owner.username}
-                  </a>
-                </span>
-                <span>
-                  created{" "}
-                  {formatDateUtc(engram.createdAt)}
-                </span>
-                <span>
-                  updated{" "}
-                  {formatDateUtc(engram.updatedAt)}
-                </span>
-              </div>
-              {engram.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {engram.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="text-[10px] text-brand/70 border border-brand/20 px-1.5 py-0.5 rounded-sm"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  <h1 className="text-xl font-bold">{engram.name}</h1>
+                  <VisibilityBadge visibility={engram.visibility} />
                 </div>
-              )}
+                {engram.description && (
+                  <p className="text-sm text-muted-foreground mb-2">
+                    {engram.description}
+                  </p>
+                )}
+                <div className="flex items-center gap-4 text-xs text-muted-foreground/70">
+                  <span>
+                    by{" "}
+                    <a
+                      href={`/@${engram.owner.username}`}
+                      className="text-brand hover:underline"
+                    >
+                      @{engram.owner.username}
+                    </a>
+                  </span>
+                  <span>
+                    created{" "}
+                    {formatDateUtc(engram.createdAt)}
+                  </span>
+                  <span>
+                    updated{" "}
+                    {formatDateUtc(engram.updatedAt)}
+                  </span>
+                </div>
+                {engram.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {engram.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-[10px] text-brand/70 border border-brand/20 px-1.5 py-0.5 rounded-sm"
+                      >
+                        #{tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        </TerminalCard>
-
-        {/* Actions (clone, edit, delete) */}
-        <EngramActions
-          engramId={engram.id}
-          isOwner={isOwner}
-          isAuthenticated={!!session?.user}
-          visibility={engram.visibility}
-        />
+          </TerminalCard>
+        </div>
 
         {/* Owner-only memory status */}
         {isOwner && (

@@ -56,7 +56,7 @@ export default async function Home() {
           {HERO_SUB}
         </pre>
 
-        <div className="max-w-xl w-full space-y-6">
+        <div className="max-w-xl w-full space-y-6 pb-8 md:pb-0">
           <TerminalCard title="About Mikoshi" variant="brand">
             <div className="space-y-3 text-sm">
               <p className="text-muted-foreground">

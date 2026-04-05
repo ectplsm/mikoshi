@@ -105,9 +105,19 @@ export default async function Home() {
                   [ SIGN IN WITH GOOGLE ]
                 </NeonButton>
               </form>
+              <p className="max-w-md text-center text-xs leading-relaxed text-muted-foreground">
+                By clicking this button, you agree to the{" "}
+                <Link href="/terms" className="text-brand hover:underline">
+                  Terms of Service
+                </Link>{" "}
+                and{" "}
+                <Link href="/privacy" className="text-brand hover:underline">
+                  Privacy Policy
+                </Link>
+                .
+              </p>
             </div>
           </TerminalCard>
-
         </div>
       </main>
     </div>

@@ -98,24 +98,31 @@ All endpoints require authentication via Bearer token (API key) or session cooki
 | `PATCH` | `/api/v1/engrams/:id` | Update metadata |
 | `DELETE` | `/api/v1/engrams/:id` | Delete Engram |
 | `POST` | `/api/v1/engrams/:id/clone` | Clone a public/unlisted Engram |
+| `PUT` | `/api/v1/engrams/:id/persona` | Update persona files with drift detection (409 on conflict) |
 | `PUT` | `/api/v1/engrams/:id/memory` | Upload encrypted memory bundle |
 | `GET` | `/api/v1/engrams/:id/memory` | Download encrypted memory bundle |
 | `DELETE` | `/api/v1/engrams/:id/memory` | Delete encrypted memory bundle |
 | `GET` | `/api/v1/engrams/:id/sync-status` | Fetch owner-only sync comparison tokens |
+| `PATCH` | `/api/v1/me/profile` | Update username (one-time) or display name |
+| `GET` | `/api/v1/me/username-availability` | Check username availability |
 | `POST` | `/api/v1/api-keys` | Create API key |
 | `GET` | `/api/v1/api-keys` | List API keys |
 | `DELETE` | `/api/v1/api-keys` | Delete API key |
 
-For local development and manual verification flows, see [docs/development.md](/Users/turtlekazu/McpProjects/mikoshi/docs/development.md).
+For local development and manual verification flows, see [docs/development.md](docs/development.md).
 
 ## Pages
 
 | URL | Description |
 |-----|-------------|
-| `/` | Landing page |
-| `/dashboard` | Engram management, upload, API keys (auth required) |
+| `/` | Landing page with sign-in |
+| `/onboarding` | Username setup for new users |
+| `/dashboard` | Engram management (auth required) |
+| `/settings` | Profile editor and API key management (auth required) |
 | `/e/:id` | Engram detail and file viewer |
-| `/@:username` | Public user profile |
+| `/:username` | Public user profile |
+| `/terms` | Terms of Service |
+| `/privacy` | Privacy Policy |
 
 ## Related Projects
 

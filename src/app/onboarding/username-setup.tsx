@@ -158,6 +158,11 @@ export function UsernameSetup({ initialDisplayName = "" }: UsernameSetupProps) {
               &gt; username already taken
             </p>
           )}
+          <div className="border border-amber-500/30 bg-amber-500/5 rounded-sm px-3 py-2">
+            <p className="text-xs text-amber-500/90">
+              Username is permanent and cannot be changed later.
+            </p>
+          </div>
         </div>
 
         {/* Display name section */}
@@ -182,13 +187,6 @@ export function UsernameSetup({ initialDisplayName = "" }: UsernameSetupProps) {
         {errorMessage && (
           <p className="text-xs text-destructive/80">&gt; {errorMessage}</p>
         )}
-
-        {/* Warning */}
-        <div className="border border-amber-500/30 bg-amber-500/5 rounded-sm px-3 py-2">
-          <p className="text-xs text-amber-500/90">
-            Username is permanent and cannot be changed later.
-          </p>
-        </div>
 
         {/* Confirm button */}
         <NeonButton

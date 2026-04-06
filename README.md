@@ -1,3 +1,6 @@
+| English | [日本語](README-ja.md) |
+|:---:|:---:|
+
 # MIKOSHI: Fortress for Digital Souls
 
 <img src="assets/mikoshi_hero.png" alt="MIKOSHI: Fortress for Digital Souls" width="720">

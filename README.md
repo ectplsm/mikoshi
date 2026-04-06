@@ -2,8 +2,9 @@
 
 <img src="assets/mikoshi_hero.png" alt="MIKOSHI: Fortress for Digital Souls" width="720">
 
-**Mikoshi** is a cloud fortress for storing, sharing, and managing AI persona data (**Engrams**).
-Part of [RELIC](https://github.com/ectplsm/relic) — a AI persona management system.
+**Mikoshi** is a cloud backend for storing, sharing, and managing AI **Engrams**
+(persona and memory).
+Part of [Relic](https://github.com/ectplsm/relic) — an AI persona injection system.
 
 ## What is an Engram?
 

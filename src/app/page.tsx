@@ -30,7 +30,7 @@ const HERO_MARK = [
 
 const HERO_SUB = [
   "",
-  "    CLOUD DATA FORTRESS",
+  " Fortress for Digital Souls",
   "Engram Storage & Sharing Hub",
   "",
 ].join("\n");
@@ -71,7 +71,7 @@ export default async function Home() {
                 >
                   Relic
                 </Link>{" "}
-                (a CLI tool for Engram injection).
+                - a CLI tool for Engram injection.
               </p>
               <p className="text-muted-foreground">
                 <span className="text-brand">&gt;</span> Upload your Engram
@@ -93,7 +93,7 @@ export default async function Home() {
           <TerminalCard title="Get Started" variant="brand">
             <div className="flex flex-col items-center gap-4 py-4">
               <GlitchText as="p" className="text-lg text-foreground">
-                CONTINUE TO MIKOSHI
+                ENTER MIKOSHI
               </GlitchText>
               <form
                 action={async () => {

@@ -1,13 +1,4 @@
-```
-    __  ___ ____ __ __ ____  _____ __ __ ____
-   /  |/  //  _// //_// __ \/ ___// // //  _/
-  / /|_/ / / / / ,<  / / / /\__ \/ _  / / /
- / /  / /_/ / / /| |/ /_/ /___/ / // /_/ /
-/_/  /_//___//_/ |_|\____//____/_//_//___/
-
-CLOUD DATA FORTRESS
-Engram Storage & Sharing Hub
-```
+<img src="assets/mikoshi_hero.png" alt="MIKOSHI — Cloud Data Fortress" width="720">
 
 **Mikoshi** is a cloud fortress for storing, sharing, and managing AI persona data (**Engrams**).
 Part of [PROJECT RELIC](https://github.com/ectplsm/relic) — a cyberpunk AI agent management system.

@@ -134,4 +134,4 @@ For local development and manual verification flows, see [docs/development.md](d
 
 ## License
 
-MIT
+[MIT](./LICENCE.md)

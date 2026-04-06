@@ -21,7 +21,7 @@ memory/          # Date-based memory entries
 In Mikoshi's sync model:
 
 - `SOUL.md` and `IDENTITY.md` are stored as plaintext — viewable, shareable, diffable
-- `USER.md`, `MEMORY.md`, and `memory/*.md` are encrypted client-side before upload — Mikoshi never sees the contents
+- `USER.md`, `MEMORY.md`, and `memory/*.md` are **end-to-end encrypted**. They are encrypted on your device before upload and decrypted only on your device after download. Mikoshi stores ciphertext and never has access to the plaintext.
 - `archive.md` is local-only and never uploaded
 
 ## Getting Started
@@ -62,7 +62,7 @@ Set your Engram's visibility to **Public** or **Unlisted** from the dashboard. O
 ## Features
 
 - **Persona Storage** — Store Engrams with plaintext `SOUL.md` and `IDENTITY.md`
-- **Encrypted Memory** — Upload distilled memory as an opaque encrypted bundle
+- **End-to-End Encrypted Memory** — Memory files are encrypted on your device before upload. Mikoshi never sees the plaintext.
 - **Sync Status** — Compare local persona and memory hashes against cloud state
 - **Drift Detection** — Persona overwrites use optimistic concurrency (409 on conflict)
 - **Share** — Set visibility to Public, Unlisted, or Private

@@ -83,6 +83,15 @@ Pages that require authentication must use `requireUsername()` from `src/lib/req
 This redirects unauthenticated users to `/` and users without a confirmed username to `/onboarding`.
 Apply this to every new protected page.
 
+## Shared Contracts
+
+Cross-repo contracts live in the sibling `contracts-local/` directory.
+These define boundaries, invariants, and API/data contracts that both `relic` and `mikoshi` must obey.
+
+- Put cross-repo facts there, not implementation details
+- If a rule must be enforced by both repos, it belongs there
+- Prefer updating contracts before implementing behavior that depends on them
+
 ## Local Plans
 
 Multi-step work that should survive beyond a single session goes in `docs-local/plans/`.

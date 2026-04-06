@@ -71,7 +71,7 @@ export default async function Home() {
                 >
                   Relic
                 </Link>{" "}
-                - a CLI tool for Engram injection.
+                - an AI persona injection system.
               </p>
               <p className="text-muted-foreground">
                 <span className="text-brand">&gt;</span> Upload your Engram

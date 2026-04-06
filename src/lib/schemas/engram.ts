@@ -144,12 +144,13 @@ export const EngramResponse = z.object({
 
 // ─── Encrypted memory blob schemas ───
 
-// 20 MB in base64 characters (~15 MB raw binary)
-const MAX_BASE64_LENGTH = 20 * 1024 * 1024;
+// 4 MB in base64 characters (~3 MB raw binary).
+// Aligned with Vercel Serverless Functions request body limit (4.5 MB).
+const MAX_BASE64_LENGTH = 4 * 1024 * 1024;
 
 const base64 = z.string().min(1, "Must be non-empty base64").max(
   MAX_BASE64_LENGTH,
-  `Must not exceed ${MAX_BASE64_LENGTH} characters (~15 MB)`
+  `Must not exceed ${MAX_BASE64_LENGTH} characters (~3 MB)`
 );
 
 export const ScryptParamsSchema = z.object({

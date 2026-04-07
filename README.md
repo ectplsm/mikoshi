@@ -60,7 +60,7 @@ Generate an API key in **Settings** on the Mikoshi dashboard, then use Relic to 
 
 ### 5. Share
 
-Set your Engram's visibility to **Public** or **Unlisted** from the dashboard. Others can view the persona files and clone your Engram into their own account.
+Open the Engram details page and change the `Visibility` badge to **Public** or **Unlisted**. Others can then view the persona files and clone your Engram into their own account.
 
 ## Features
 

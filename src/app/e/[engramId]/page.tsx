@@ -8,6 +8,7 @@ import { EngramViewer } from "@/components/engram/engram-viewer";
 import { VisibilityBadge } from "@/components/ui/visibility-badge";
 import { TerminalCard } from "@/components/ui/terminal-card";
 import { MemoryStatus } from "@/components/engram/memory-status";
+import { EngramVisibilityControl } from "@/components/engram/engram-visibility-control";
 import { EngramCardActions } from "./actions";
 import { Visibility } from "@/generated/prisma/enums";
 import { formatDateUtc } from "@/lib/utils";
@@ -72,7 +73,14 @@ export default async function EngramPage({ params }: PageProps) {
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h1 className="text-xl font-bold">{engram.name}</h1>
-                  <VisibilityBadge visibility={engram.visibility} />
+                  {isOwner ? (
+                    <EngramVisibilityControl
+                      engramId={engram.id}
+                      currentVisibility={engram.visibility}
+                    />
+                  ) : (
+                    <VisibilityBadge visibility={engram.visibility} />
+                  )}
                 </div>
                 {engram.description && (
                   <p className="text-sm text-muted-foreground mb-2">

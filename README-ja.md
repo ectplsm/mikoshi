@@ -54,8 +54,14 @@ relic create --id my-persona --name "My Persona"
 Mikoshi ダッシュボードの **Settings** で API キーを生成し、Relic でアップロードします：
 
 ```bash
-# （Relic sync コマンド — 近日公開）
+relic config mikoshi-api-key <your-api-key>
+relic config mikoshi-passphrase <your-passphrase>  # 任意
+relic mikoshi push my-persona
+relic mikoshi memory push my-persona
 ```
+
+`relic mikoshi push` は平文の人格ファイル（`SOUL.md`, `IDENTITY.md`, `engram.json`）をアップロードします。
+`relic mikoshi memory push` はメモリバンドルを暗号化してアップロードします。config に保存したくない場合は、Relic に対話的に入力させることもできます。
 
 ### 5. 共有
 

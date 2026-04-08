@@ -55,8 +55,14 @@ relic create --id my-persona --name "My Persona"
 Generate an API key in **Settings** on the Mikoshi dashboard, then use Relic to upload:
 
 ```bash
-# (Relic sync commands — coming soon)
+relic config mikoshi-api-key <your-api-key>
+relic config mikoshi-passphrase <your-passphrase>  # optional
+relic mikoshi push my-persona
+relic mikoshi memory push my-persona
 ```
+
+`relic mikoshi push` uploads plaintext persona files (`SOUL.md`, `IDENTITY.md`, `engram.json`).
+`relic mikoshi memory push` encrypts and uploads your memory bundle. If you prefer not to save a passphrase in config, Relic can prompt you for one interactively.
 
 ### 5. Share
 

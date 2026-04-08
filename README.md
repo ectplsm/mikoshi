@@ -42,9 +42,9 @@ npm install -g @ectplsm/relic
 relic init
 ```
 
-### 3. Create an Engram
+### 3. Create an Engram (If You Need One)
 
-Use Relic's MCP tools with your favorite AI coding CLI (Claude Code, Codex, Gemini CLI) to create an Engram interactively, or use the CLI directly:
+If you do not already have an Engram locally, use Relic's MCP tools with your favorite AI coding CLI (Claude Code, Codex, Gemini CLI) to create one interactively, or use the CLI directly:
 
 ```bash
 relic create --id my-persona --name "My Persona"

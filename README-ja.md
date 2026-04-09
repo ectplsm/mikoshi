@@ -23,7 +23,7 @@ memory/          # 日付ベースのメモリエントリ
 Mikoshi の同期モデル：
 
 - `SOUL.md` と `IDENTITY.md` は平文で保存 — 閲覧・共有・差分比較が可能
-- `USER.md`、`MEMORY.md`、`memory/*.md` は**エンドツーエンド暗号化**。アップロード前にデバイス上で暗号化され、ダウンロード後もデバイス上でのみ復号されます。Mikoshi が平文にアクセスすることはありません。
+- `USER.md`、`MEMORY.md`、`memory/*.md` は**エンドツーエンド暗号化**。アップロード前にデバイス上で暗号化され、pull した後もデバイス上でのみ復号されます。Mikoshi が平文にアクセスすることはありません。
 - `archive.md` はローカル専用でアップロードされません
 
 ## はじめに
@@ -49,9 +49,9 @@ relic init
 relic create --id my-persona --name "My Persona"
 ```
 
-### 4. Mikoshi にアップロード
+### 4. Mikoshi に Push
 
-Mikoshi ダッシュボードの **Settings** で API キーを生成し、Relic でアップロードします：
+Mikoshi ダッシュボードの **Settings** で API キーを生成し、Relic で push します：
 
 ```bash
 relic config mikoshi-api-key <your-api-key>
@@ -62,7 +62,19 @@ relic mikoshi push --engram my-persona
 `relic mikoshi push` は平文の人格ファイル（`SOUL.md`, `IDENTITY.md`）をアップロードし、その後に暗号化 memory も自動 sync します。
 通常運用では、ローカルと remote の memory をマージする `relic mikoshi sync` を使います。`--engram <id>` で単体、`--all` でローカルにも Mikoshi にも存在する全対象を同期します。どちらかの指定が必須です。
 
-### 5. 共有
+### 5. 別マシンで Pull
+
+別マシン側では、同じ API キーと passphrase を設定してから、ローカル Relic へ pull します：
+
+```bash
+relic config mikoshi-api-key <your-api-key>
+relic config mikoshi-passphrase <your-passphrase>  # 任意
+relic mikoshi pull --engram my-persona
+```
+
+`relic mikoshi pull` はローカル Engram が無ければ新規作成し、作成前または上書き前に確認を出します。`--yes` を付けると確認をスキップできます。
+
+### 6. 共有
 
 Engram の詳細ページで `Visibility` バッジから公開設定を **Public** または **Unlisted** に変更すると、他のユーザーが人格ファイルを閲覧したり、自分のアカウントにクローンできるようになります。
 

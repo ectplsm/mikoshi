@@ -24,7 +24,7 @@ memory/          # Date-based memory entries
 In Mikoshi's sync model:
 
 - `SOUL.md` and `IDENTITY.md` are stored as plaintext — viewable, shareable, diffable
-- `USER.md`, `MEMORY.md`, and `memory/*.md` are **end-to-end encrypted**. They are encrypted on your device before upload and decrypted only on your device after download. Mikoshi stores ciphertext and never has access to the plaintext.
+- `USER.md`, `MEMORY.md`, and `memory/*.md` are **end-to-end encrypted**. They are encrypted on your device before upload and decrypted only on your device after pull. Mikoshi stores ciphertext and never has access to the plaintext.
 - `archive.md` is local-only and never uploaded
 
 ## Getting Started
@@ -50,9 +50,9 @@ If you do not already have an Engram locally, use Relic's MCP tools with your fa
 relic create --id my-persona --name "My Persona"
 ```
 
-### 4. Upload to Mikoshi
+### 4. Push to Mikoshi
 
-Generate an API key in **Settings** on the Mikoshi dashboard, then use Relic to upload:
+Generate an API key in **Settings** on the Mikoshi dashboard, then use Relic to push:
 
 ```bash
 relic config mikoshi-api-key <your-api-key>
@@ -63,7 +63,19 @@ relic mikoshi push --engram my-persona
 `relic mikoshi push` uploads plaintext persona files (`SOUL.md`, `IDENTITY.md`) and then auto-syncs encrypted memory.
 For normal operation, use `relic mikoshi sync` to merge local and remote memory. `--engram <id>` syncs one Engram and `--all` scans every matching local Engram that also exists on Mikoshi. One of those flags is required.
 
-### 5. Share
+### 5. Pull on Another Machine
+
+On another machine, set the same API key and passphrase, then pull the Engram into local Relic:
+
+```bash
+relic config mikoshi-api-key <your-api-key>
+relic config mikoshi-passphrase <your-passphrase>  # optional
+relic mikoshi pull --engram my-persona
+```
+
+`relic mikoshi pull` creates the local Engram if it does not exist yet, and asks before creating or overwriting unless you pass `--yes`.
+
+### 6. Share
 
 Open the Engram details page and change the `Visibility` badge to **Public** or **Unlisted**. Others can then view the persona files and clone your Engram into their own account.
 

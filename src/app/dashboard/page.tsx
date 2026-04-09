@@ -50,7 +50,7 @@ export default async function DashboardPage() {
               <p className="text-xs text-muted-foreground mb-2">
                 Upload your Engram from Relic:
               </p>
-              <CodeBlock>relic mikoshi upload --engram your-engram</CodeBlock>
+              <CodeBlock>relic mikoshi push --engram your-engram</CodeBlock>
             </div>
           </div>
         )}

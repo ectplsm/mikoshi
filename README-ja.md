@@ -60,7 +60,7 @@ relic mikoshi push --engram my-persona
 ```
 
 `relic mikoshi push` は平文の人格ファイル（`SOUL.md`, `IDENTITY.md`）をアップロードし、その後に暗号化 memory も自動 sync します。
-通常運用では、ローカルと remote の memory をマージする `relic mikoshi sync` を使います。追加オプションなしでは現在の `default-engram` を対象にし、`--target <id>` で単体、`--all` で全対象を同期できます。
+通常運用では、ローカルと remote の memory をマージする `relic mikoshi sync` を使います。`--engram <id>` で単体、`--all` でローカルにも Mikoshi にも存在する全対象を同期します。どちらかの指定が必須です。
 
 ### 5. 共有
 

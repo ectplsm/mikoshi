@@ -61,7 +61,7 @@ relic mikoshi push --engram my-persona
 ```
 
 `relic mikoshi push` uploads plaintext persona files (`SOUL.md`, `IDENTITY.md`) and then auto-syncs encrypted memory.
-For normal operation, use `relic mikoshi sync` to merge local and remote memory. With no extra flags, it targets your current `default-engram`; `--target <id>` syncs one Engram and `--all` scans every matching Engram.
+For normal operation, use `relic mikoshi sync` to merge local and remote memory. `--engram <id>` syncs one Engram and `--all` scans every matching local Engram that also exists on Mikoshi. One of those flags is required.
 
 ### 5. Share
 

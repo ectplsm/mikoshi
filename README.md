@@ -57,12 +57,11 @@ Generate an API key in **Settings** on the Mikoshi dashboard, then use Relic to 
 ```bash
 relic config mikoshi-api-key <your-api-key>
 relic config mikoshi-passphrase <your-passphrase>  # optional
-relic mikoshi push my-persona
-relic mikoshi memory push my-persona
+relic mikoshi push --engram my-persona
 ```
 
-`relic mikoshi push` uploads plaintext persona files (`SOUL.md`, `IDENTITY.md`, `engram.json`).
-`relic mikoshi memory push` encrypts and uploads your memory bundle. If you prefer not to save a passphrase in config, Relic can prompt you for one interactively.
+`relic mikoshi push` uploads plaintext persona files (`SOUL.md`, `IDENTITY.md`) and then auto-syncs encrypted memory.
+For normal operation, use `relic mikoshi sync` to merge local and remote memory. With no extra flags, it targets your current `default-engram`; `--target <id>` syncs one Engram and `--all` scans every matching Engram.
 
 ### 5. Share
 

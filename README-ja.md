@@ -56,12 +56,11 @@ Mikoshi ダッシュボードの **Settings** で API キーを生成し、Relic
 ```bash
 relic config mikoshi-api-key <your-api-key>
 relic config mikoshi-passphrase <your-passphrase>  # 任意
-relic mikoshi push my-persona
-relic mikoshi memory push my-persona
+relic mikoshi push --engram my-persona
 ```
 
-`relic mikoshi push` は平文の人格ファイル（`SOUL.md`, `IDENTITY.md`, `engram.json`）をアップロードします。
-`relic mikoshi memory push` はメモリバンドルを暗号化してアップロードします。config に保存したくない場合は、Relic に対話的に入力させることもできます。
+`relic mikoshi push` は平文の人格ファイル（`SOUL.md`, `IDENTITY.md`）をアップロードし、その後に暗号化 memory も自動 sync します。
+通常運用では、ローカルと remote の memory をマージする `relic mikoshi sync` を使います。追加オプションなしでは現在の `default-engram` を対象にし、`--target <id>` で単体、`--all` で全対象を同期できます。
 
 ### 5. 共有
 

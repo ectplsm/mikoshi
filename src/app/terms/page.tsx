@@ -18,7 +18,7 @@ const termSections = [
   {
     title: "2. Eligibility and Registration",
     body: [
-      "You must provide accurate and current information when using Mikoshi. Mikoshi currently uses Google sign-in for authentication and may rely on information received through that authentication flow.",
+      "You must provide accurate and current information when using Mikoshi. Mikoshi uses third-party sign-in providers, currently Google and GitHub, for authentication and may rely on information received through those authentication flows.",
       "If you are a minor under applicable law, you may use Mikoshi only with the consent of a parent, guardian, or other legal representative.",
       "If your registration or account information is false, outdated, incomplete, or misleading, Mikoshi may restrict or terminate your access.",
     ],
@@ -142,7 +142,7 @@ export default function TermsPage() {
           <TerminalCard title="Overview" variant="brand">
             <div className="space-y-3 text-sm leading-7 text-muted-foreground">
               <p>
-                Effective date: <span className="text-foreground">April 5, 2026</span>
+                Effective date: <span className="text-foreground">April 11, 2026</span>
               </p>
               <p>
                 These Terms of Service govern your use of Mikoshi, an Engram

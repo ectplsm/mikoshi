@@ -45,7 +45,7 @@ export default async function Home() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 flex flex-col items-center justify-center px-4 pt-8 md:pt-0 scanlines">
+      <main className="flex-1 flex flex-col items-center justify-center px-4 pt-8 md:pt-12 scanlines">
         <pre className="text-brand/70 text-[9px] sm:text-[10px] md:text-xs leading-tight mb-6 select-none overflow-x-auto max-w-full">
           {HERO_MARK}
         </pre>
@@ -56,7 +56,7 @@ export default async function Home() {
           {HERO_SUB}
         </pre>
 
-        <div className="max-w-xl w-full space-y-6 pb-8 md:pb-0">
+        <div className="max-w-xl w-full space-y-6 pb-8 md:pb-12">
           <TerminalCard title="About Mikoshi" variant="brand">
             <div className="space-y-3 text-sm">
               <p className="text-muted-foreground">

@@ -93,20 +93,36 @@ export default async function Home() {
           <TerminalCard title="Get Started" variant="brand">
             <div className="flex flex-col items-center gap-4 py-4">
               <GlitchText as="p" className="text-lg text-foreground">
-                ENTER MIKOSHI
+                SIGN IN WITH...
               </GlitchText>
-              <form
-                action={async () => {
-                  "use server";
-                  await signIn("google");
-                }}
-              >
-                <NeonButton variant="brand" size="lg" type="submit">
-                  [ SIGN IN WITH GOOGLE ]
-                </NeonButton>
-              </form>
+              <div className="flex flex-row items-center justify-center gap-3">
+                <form
+                  action={async () => {
+                    "use server";
+                    await signIn("google");
+                  }}
+                >
+                  <NeonButton variant="brand" size="lg" type="submit">
+                    [ GOOGLE ]
+                  </NeonButton>
+                </form>
+                <form
+                  action={async () => {
+                    "use server";
+                    await signIn("github");
+                  }}
+                >
+                  <NeonButton variant="brand" size="lg" type="submit">
+                    [ GITHUB ]
+                  </NeonButton>
+                </form>
+              </div>
+              <p className="max-w-md text-center text-xs leading-relaxed text-muted-foreground/70">
+                Sign in with the same email on Google and GitHub to link
+                them. Different emails will create separate accounts.
+              </p>
               <p className="max-w-md text-center text-xs leading-relaxed text-muted-foreground">
-                By clicking this button, you agree to the{" "}
+                By signing in, you agree to the{" "}
                 <Link href="/terms" className="text-brand hover:underline">
                   Terms of Service
                 </Link>{" "}

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { auth, signIn, signOut } from "@/lib/auth";
+import { auth, signOut } from "@/lib/auth";
 import { NeonButton } from "@/components/ui/neon-button";
 import { MobileMenu } from "./mobile-menu";
 
@@ -54,16 +54,11 @@ export async function Header() {
             <MobileMenu username={session.user.username ?? ""} />
           </>
         ) : (
-          <form
-            action={async () => {
-              "use server";
-              await signIn("google");
-            }}
-          >
-            <NeonButton variant="brand" size="sm" type="submit">
+          <Link href="/">
+            <NeonButton variant="brand" size="sm" type="button">
               sign_in
             </NeonButton>
-          </form>
+          </Link>
         )}
       </div>
     </header>

@@ -16,7 +16,7 @@ export default async function DashboardPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-1 max-w-6xl mx-auto w-full px-4 py-8">
+      <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
         <div className="flex items-center gap-3 mb-8">
           <span className="text-brand">&gt;</span>
           <h1 className="text-xl font-bold">Dashboard</h1>

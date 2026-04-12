@@ -21,13 +21,15 @@ export default async function SettingsPage() {
           <h1 className="text-xl font-bold">Settings</h1>
         </div>
 
-        <div className="grid grid-cols-1 gap-6">
-          <ProfileEditor
-            currentUsername={session.user.username}
-            currentDisplayName={session.user.name ?? ""}
-            currentImageUrl={getRenderableUserImage(user?.image)}
-          />
-          <ApiKeyManager />
+        <div>
+          <div className="grid grid-cols-1 gap-6">
+            <ProfileEditor
+              currentUsername={session.user.username}
+              currentDisplayName={session.user.name ?? ""}
+              currentImageUrl={getRenderableUserImage(user?.image)}
+            />
+            <ApiKeyManager />
+          </div>
         </div>
       </main>
     </div>

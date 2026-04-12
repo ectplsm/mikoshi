@@ -32,52 +32,61 @@ export default async function ProfilePage({ params }: PageProps) {
     <div className="flex flex-col min-h-screen">
       <Header />
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
-        <TerminalCard title="Profile" variant="brand">
-          <div className="flex items-center gap-4">
-            <UserAvatar
-              username={user.username}
-              displayName={user.name}
-              imageUrl={getRenderableUserImage(user.image)}
-              size="lg"
-            />
-            <div>
-              <h1 className="text-xl font-bold">{user.name ?? user.username}</h1>
-              <p className="text-sm text-brand">@{user.username}</p>
-              <p className="text-xs text-muted-foreground/50 mt-1">
-                member since {formatDateUtc(user.createdAt)}
+        <div className="flex items-center gap-3 mb-8">
+          <span className="text-brand">&gt;</span>
+          <h1 className="text-xl font-bold">Profile</h1>
+        </div>
+
+        <div>
+          <TerminalCard variant="brand">
+            <div className="flex items-center gap-4">
+              <UserAvatar
+                username={user.username}
+                displayName={user.name}
+                imageUrl={getRenderableUserImage(user.image)}
+                size="lg"
+              />
+              <div>
+                <h1 className="text-xl font-bold">
+                  {user.name ?? user.username}
+                </h1>
+                <p className="text-sm text-brand">@{user.username}</p>
+                <p className="text-xs text-muted-foreground/50 mt-1">
+                  member since {formatDateUtc(user.createdAt)}
+                </p>
+              </div>
+            </div>
+          </TerminalCard>
+
+          <div className="mt-8">
+            <div className="flex items-center gap-2 mb-4">
+              <span className="text-brand">&gt;</span>
+              <h2 className="text-sm font-bold">
+                Public Engrams ({user.engrams.length})
+              </h2>
+            </div>
+
+            {user.engrams.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {user.engrams.map((e) => (
+                  <EngramCard
+                    key={e.id}
+                    id={e.id}
+                    name={e.name}
+                    description={e.description}
+                    visibility={e.visibility}
+                    tags={e.tags}
+                    avatarUrl={e.avatarUrl}
+                    updatedAt={e.updatedAt.toISOString()}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-muted-foreground/50">
+                &gt; no public engrams
               </p>
-            </div>
+            )}
           </div>
-        </TerminalCard>
-
-        <div className="mt-8">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="text-brand">&gt;</span>
-            <h2 className="text-sm font-bold">
-              Public Engrams ({user.engrams.length})
-            </h2>
-          </div>
-
-          {user.engrams.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {user.engrams.map((e) => (
-                <EngramCard
-                  key={e.id}
-                  id={e.id}
-                  name={e.name}
-                  description={e.description}
-                  visibility={e.visibility}
-                  tags={e.tags}
-                  avatarUrl={e.avatarUrl}
-                  updatedAt={e.updatedAt.toISOString()}
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-sm text-muted-foreground/50">
-              &gt; no public engrams
-            </p>
-          )}
         </div>
       </main>
     </div>

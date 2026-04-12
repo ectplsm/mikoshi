@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { getRenderableUserImage } from "@/lib/avatar";
 import { Header } from "@/components/layout/header";
 import { EngramCard } from "@/components/dashboard/engram-card";
 import { TerminalCard } from "@/components/ui/terminal-card";
@@ -33,7 +34,12 @@ export default async function ProfilePage({ params }: PageProps) {
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 py-8">
         <TerminalCard title="Profile" variant="brand">
           <div className="flex items-center gap-4">
-            <UserAvatar username={user.username} size="lg" />
+            <UserAvatar
+              username={user.username}
+              displayName={user.name}
+              imageUrl={getRenderableUserImage(user.image)}
+              size="lg"
+            />
             <div>
               <h1 className="text-xl font-bold">{user.name ?? user.username}</h1>
               <p className="text-sm text-brand">@{user.username}</p>

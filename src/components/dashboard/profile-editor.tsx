@@ -3,15 +3,18 @@
 import { useState, useCallback } from "react";
 import { TerminalCard } from "@/components/ui/terminal-card";
 import { NeonButton } from "@/components/ui/neon-button";
+import { ProfileAvatarControl } from "@/components/dashboard/profile-avatar-control";
 
 interface ProfileEditorProps {
   currentUsername: string;
   currentDisplayName: string;
+  currentImageUrl: string | null;
 }
 
 export function ProfileEditor({
   currentUsername,
   currentDisplayName,
+  currentImageUrl,
 }: ProfileEditorProps) {
   // ─── Display name state ───
   const [displayName, setDisplayName] = useState(currentDisplayName);
@@ -55,6 +58,14 @@ export function ProfileEditor({
   return (
     <TerminalCard title="Profile" variant="brand">
       <div className="space-y-6">
+        <ProfileAvatarControl
+          username={currentUsername}
+          displayName={displayName}
+          currentImageUrl={currentImageUrl}
+        />
+
+        <div className="border-t border-border" />
+
         {/* ─── Username (locked) ─── */}
         <div className="space-y-2">
           <div className="text-xs text-muted-foreground font-medium">
@@ -70,9 +81,6 @@ export function ProfileEditor({
             &gt; /@{currentUsername}
           </div>
         </div>
-
-        {/* ─── Divider ─── */}
-        <div className="border-t border-border" />
 
         {/* ─── Display name ─── */}
         <div className="space-y-3">

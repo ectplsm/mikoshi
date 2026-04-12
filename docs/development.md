@@ -99,11 +99,32 @@ AUTH_GOOGLE_ID="your-client-id"
 AUTH_GOOGLE_SECRET="your-client-secret"
 ```
 
-## 5. Cloudflare R2 (NOT NEEDED)
+## 5. Cloudflare R2 (OPTIONAL)
 
-Avatar image storage. Not required for local development.
+Profile avatar image storage. Not required for general local development.
 
-All avatar-related code paths degrade gracefully without R2 credentials — Engrams work fine without avatars.
+Without R2 credentials:
+
+- the app still runs
+- Engrams still work
+- profile avatar upload is disabled
+
+### Required env vars
+
+```bash
+R2_ACCOUNT_ID="..."
+R2_ACCESS_KEY_ID="..."
+R2_SECRET_ACCESS_KEY="..."
+R2_BUCKET_NAME="mikoshi-avatars"
+R2_PUBLIC_URL="https://assets.example.com"
+```
+
+### Notes
+
+- `R2_PUBLIC_URL` should point at the public custom domain attached to the bucket
+- avatar uploads currently accept only `JPEG`, `PNG`, and `WebP`
+- max upload size is `2MB`
+- oversized images are normalized before storage
 
 ## Quick Start
 

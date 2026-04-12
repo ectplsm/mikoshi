@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { filterPersonaFiles } from "@/lib/engram-privacy";
 import { UpdateEngramSchema } from "@/lib/schemas/engram";
 import { checkRateLimit } from "@/lib/rate-limit";
-import { deleteAvatar } from "@/lib/r2";
+import { deleteManagedAvatarByUrl } from "@/lib/r2";
 import {
   ok,
   unauthorized,
@@ -141,7 +141,7 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
 
     // Delete avatar from R2 if exists
     if (engram.avatarUrl) {
-      await deleteAvatar(engram.avatarUrl).catch(() => {});
+      await deleteManagedAvatarByUrl(engram.avatarUrl).catch(() => {});
     }
 
     await db.engram.delete({ where: { id: engramId } });

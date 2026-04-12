@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { getRenderableUserImage } from "@/lib/avatar";
 import { isUsernameEmpty } from "@/lib/username";
 import { UsernameSetup } from "./username-setup";
 
@@ -11,6 +13,11 @@ export default async function OnboardingPage() {
 
   // Already has a username → dashboard
   if (!isUsernameEmpty(session.user.username)) redirect("/dashboard");
+
+  const user = await db.user.findUnique({
+    where: { id: session.user.id },
+    select: { image: true },
+  });
 
   return (
     <div className="flex flex-col min-h-screen items-center justify-center px-4">
@@ -26,7 +33,10 @@ export default async function OnboardingPage() {
         </div>
 
         {/* Username form */}
-        <UsernameSetup initialDisplayName={session.user.name ?? ""} />
+        <UsernameSetup
+          initialDisplayName={session.user.name ?? ""}
+          currentImageUrl={getRenderableUserImage(user?.image)}
+        />
       </div>
     </div>
   );

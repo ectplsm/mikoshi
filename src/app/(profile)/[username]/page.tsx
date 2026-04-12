@@ -36,6 +36,7 @@ export default async function ProfilePage({ params }: PageProps) {
           <div className="flex items-center gap-4">
             <UserAvatar
               username={user.username}
+              displayName={user.name}
               imageUrl={getRenderableUserImage(user.image)}
               size="lg"
             />

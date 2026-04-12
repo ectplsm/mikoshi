@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import Cropper from "react-easy-crop";
 import type { Area } from "react-easy-crop";
 import { NeonButton } from "@/components/ui/neon-button";
@@ -13,6 +13,7 @@ import { cropImageToBlob } from "@/lib/crop-image";
 
 interface ProfileAvatarControlProps {
   username: string;
+  displayName?: string;
   currentImageUrl: string | null;
 }
 
@@ -23,10 +24,12 @@ type StatusMessage =
 
 export function ProfileAvatarControl({
   username,
+  displayName,
   currentImageUrl,
 }: ProfileAvatarControlProps) {
   const inputId = useId();
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const [mounted, setMounted] = useState(false);
   const [imageUrl, setImageUrl] = useState(currentImageUrl);
   const [menuOpen, setMenuOpen] = useState(false);
   const [cropSrc, setCropSrc] = useState<string | null>(null);
@@ -39,6 +42,10 @@ export function ProfileAvatarControl({
   const [message, setMessage] = useState<StatusMessage>(null);
 
   const maxMb = Math.floor(AVATAR_MAX_BYTES / (1024 * 1024));
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const resetCropState = () => {
     if (cropSrc?.startsWith("blob:")) {
@@ -160,6 +167,17 @@ export function ProfileAvatarControl({
       <div className="text-xs text-muted-foreground font-medium">Avatar</div>
 
       <div className="relative inline-block">
+        {!mounted ? (
+          <div className="relative block rounded-sm">
+            <UserAvatar
+              username={username}
+              displayName={displayName}
+              imageUrl={imageUrl}
+              size="xl"
+            />
+          </div>
+        ) : (
+          <>
         {menuOpen && (
           <button
             type="button"
@@ -179,6 +197,7 @@ export function ProfileAvatarControl({
         >
           <UserAvatar
             username={username}
+            displayName={displayName}
             imageUrl={imageUrl}
             size="xl"
             className="transition-colors hover:border-brand/60"
@@ -218,6 +237,8 @@ export function ProfileAvatarControl({
           className="hidden"
           onChange={onFileChange}
         />
+          </>
+        )}
       </div>
 
       <p className="text-[10px] text-muted-foreground/60">
@@ -308,4 +329,3 @@ export function ProfileAvatarControl({
     </div>
   );
 }
-

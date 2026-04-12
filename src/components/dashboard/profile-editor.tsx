@@ -60,6 +60,7 @@ export function ProfileEditor({
       <div className="space-y-6">
         <ProfileAvatarControl
           username={currentUsername}
+          displayName={currentDisplayName}
           currentImageUrl={currentImageUrl}
         />
 

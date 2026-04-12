@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 interface UserAvatarProps {
   username: string;
+  displayName?: string | null;
   imageUrl?: string | null;
   size?: "sm" | "md" | "lg" | "xl";
   className?: string;
@@ -17,13 +18,30 @@ const sizes = {
   xl: "w-24 h-24 text-2xl",
 };
 
+function getInitials(displayName: string | null | undefined, username: string) {
+  const source = displayName?.trim() || username.trim();
+  if (!source) return "?";
+
+  const tokens = source.split(/\s+/).filter(Boolean);
+  if (tokens.length >= 2) {
+    return tokens
+      .slice(0, 2)
+      .map((token) => token[0] ?? "")
+      .join("")
+      .toUpperCase();
+  }
+
+  return (source[0] ?? "?").toUpperCase();
+}
+
 export function UserAvatar({
   username,
+  displayName,
   imageUrl,
   size = "md",
   className,
 }: UserAvatarProps) {
-  const initial = (username[0] ?? "?").toUpperCase();
+  const initial = getInitials(displayName, username);
 
   return (
     <div
@@ -43,7 +61,7 @@ export function UserAvatar({
           unoptimized
         />
       ) : (
-        initial
+        <span suppressHydrationWarning>{initial}</span>
       )}
     </div>
   );

@@ -128,6 +128,7 @@ export function UsernameSetup({
         <div className="space-y-2">
           <ProfileAvatarControl
             username={displayName.trim() || username || "?"}
+            displayName={displayName.trim() || undefined}
             currentImageUrl={currentImageUrl}
           />
           <p className="text-xs text-muted-foreground/50">

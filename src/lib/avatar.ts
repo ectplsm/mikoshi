@@ -23,3 +23,8 @@ export function isManagedAvatarUrl(url: string | null | undefined): boolean {
   return !!publicUrl && url.startsWith(`${publicUrl}/`);
 }
 
+export function getRenderableUserImage(
+  url: string | null | undefined
+): string | null {
+  return isManagedAvatarUrl(url) ? url ?? null : null;
+}

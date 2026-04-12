@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { db } from "@/lib/db";
+import { getRenderableUserImage } from "@/lib/avatar";
 import { Header } from "@/components/layout/header";
 import { EngramCard } from "@/components/dashboard/engram-card";
 import { TerminalCard } from "@/components/ui/terminal-card";
@@ -35,7 +36,7 @@ export default async function ProfilePage({ params }: PageProps) {
           <div className="flex items-center gap-4">
             <UserAvatar
               username={user.username}
-              imageUrl={user.image}
+              imageUrl={getRenderableUserImage(user.image)}
               size="lg"
             />
             <div>

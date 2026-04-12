@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { TerminalCard } from "@/components/ui/terminal-card";
 import { NeonButton } from "@/components/ui/neon-button";
+import { ProfileAvatarControl } from "@/components/dashboard/profile-avatar-control";
 import { validateUsername } from "@/lib/username";
 
 function usernameErrorMessage(
@@ -26,9 +27,13 @@ type AvailabilityStatus = "idle" | "checking" | "available" | "taken";
 
 interface UsernameSetupProps {
   initialDisplayName?: string;
+  currentImageUrl: string | null;
 }
 
-export function UsernameSetup({ initialDisplayName = "" }: UsernameSetupProps) {
+export function UsernameSetup({
+  initialDisplayName = "",
+  currentImageUrl,
+}: UsernameSetupProps) {
   const router = useRouter();
   const [username, setUsername] = useState("");
   const [displayName, setDisplayName] = useState(initialDisplayName);
@@ -120,6 +125,18 @@ export function UsernameSetup({ initialDisplayName = "" }: UsernameSetupProps) {
   return (
     <TerminalCard variant="brand">
       <div className="space-y-5">
+        <div className="space-y-2">
+          <ProfileAvatarControl
+            username={displayName.trim() || username || "?"}
+            currentImageUrl={currentImageUrl}
+          />
+          <p className="text-xs text-muted-foreground/50">
+            Optional. You can change this later in Settings.
+          </p>
+        </div>
+
+        <div className="border-t border-border" />
+
         {/* Username section */}
         <div className="space-y-2">
           <div className="text-xs text-muted-foreground font-medium">

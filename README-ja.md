@@ -136,6 +136,7 @@ Engram の詳細ページで `Visibility` バッジから公開設定を **Publi
 - Node.js >= 20
 - PostgreSQL
 - Google OAuth クレデンシャル
+- プロフィール画像アップロードを使う場合は Cloudflare R2 の認証情報
 
 ### セットアップ
 
@@ -147,6 +148,10 @@ npx prisma generate
 npx prisma db push
 npm run dev
 ```
+
+現在の実装では、プロフィール画像アップロードに Cloudflare R2 を使います。
+R2 を設定しなくても Mikoshi 自体は動作しますが、アバター画像のアップロード
+API は利用できません。
 
 ### 技術スタック
 

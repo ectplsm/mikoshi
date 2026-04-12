@@ -137,6 +137,7 @@ If you want to run your own Mikoshi instance:
 - Node.js >= 20
 - PostgreSQL
 - Google OAuth credentials
+- Cloudflare R2 credentials if you want profile avatar uploads
 
 ### Setup
 
@@ -148,6 +149,10 @@ npx prisma generate
 npx prisma db push
 npm run dev
 ```
+
+Profile avatar uploads use Cloudflare R2 in the current implementation.
+If R2 is not configured, the rest of Mikoshi still works, but avatar upload
+endpoints remain unavailable.
 
 ### Tech Stack
 

@@ -284,7 +284,7 @@ export function ProfileAvatarControl({
                   aspect={1}
                   cropShape="rect"
                   showGrid={false}
-                  objectFit="horizontal-cover"
+                  objectFit="contain"
                   onCropChange={setCrop}
                   onZoomChange={setZoom}
                   onCropComplete={(_, areaPixels) => setCroppedAreaPixels(areaPixels)}

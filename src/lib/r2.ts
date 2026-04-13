@@ -59,6 +59,30 @@ export async function uploadUserAvatar(
 }
 
 /**
+ * Upload a normalized Engram avatar image to Cloudflare R2.
+ */
+export async function uploadEngramAvatar(
+  engramId: string,
+  data: Buffer,
+  mimeType: string
+): Promise<string> {
+  const ext = mimeType.split("/")[1] ?? "webp";
+  const key = `engrams/${engramId}/avatar-${Date.now()}.${ext}`;
+  const s3 = getClient();
+
+  await s3.send(
+    new PutObjectCommand({
+      Bucket: BUCKET,
+      Key: key,
+      Body: data,
+      ContentType: mimeType,
+    })
+  );
+
+  return `${PUBLIC_URL}/${key}`;
+}
+
+/**
  * Delete a Mikoshi-managed avatar image from Cloudflare R2.
  */
 export async function deleteManagedAvatarByUrl(avatarUrl: string): Promise<void> {

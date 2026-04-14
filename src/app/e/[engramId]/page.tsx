@@ -64,9 +64,9 @@ export default async function EngramPage({ params }: PageProps) {
                 <Image
                   src={engram.avatarUrl}
                   alt=""
-                  className="w-16 h-16 rounded-sm border border-border object-cover"
-                  width={64}
-                  height={64}
+                  className="w-20 h-20 rounded-sm border border-border object-cover"
+                  width={80}
+                  height={80}
                   unoptimized
                 />
               )}

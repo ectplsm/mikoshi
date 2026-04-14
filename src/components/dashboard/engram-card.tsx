@@ -39,9 +39,9 @@ export function EngramCard({
               <Image
                 src={avatarUrl}
                 alt=""
-                className="w-10 h-10 rounded-sm border border-border object-cover"
-                width={40}
-                height={40}
+                className="w-16 h-16 rounded-sm border border-border object-cover"
+                width={64}
+                height={64}
                 unoptimized
               />
             )}

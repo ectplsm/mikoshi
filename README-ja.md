@@ -81,6 +81,7 @@ Engram の詳細ページで `Visibility` バッジから公開設定を **Publi
 ## 機能
 
 - **人格の保管** — `SOUL.md` と `IDENTITY.md` を平文で保存
+- **Engram アバター** — `IDENTITY.md` / Relic sync フロー経由で Engram ごとのアバターをアップロード・保存・表示
 - **エンドツーエンド暗号化メモリ** — メモリファイルはデバイス上で暗号化してからアップロード。Mikoshi が平文を見ることはありません。
 - **同期ステータス** — ローカルとクラウドの人格・メモリハッシュを比較
 - **ドリフト検出** — 人格の上書きは楽観的並行性制御で保護（競合時は 409）
@@ -101,6 +102,8 @@ Engram の詳細ページで `Visibility` バッジから公開設定を **Publi
 | `PATCH` | `/api/v1/engrams/:id` | メタデータ更新 |
 | `DELETE` | `/api/v1/engrams/:id` | Engram 削除 |
 | `POST` | `/api/v1/engrams/:id/clone` | 公開 Engram をクローン |
+| `PUT` | `/api/v1/engrams/:id/avatar` | Engram アバターのアップロード / 置換 |
+| `DELETE` | `/api/v1/engrams/:id/avatar` | Engram アバターの削除 |
 | `PUT` | `/api/v1/engrams/:id/persona` | 人格ファイルの置換（ドリフト検出付き） |
 | `PUT` | `/api/v1/engrams/:id/memory` | 暗号化メモリのアップロード |
 | `GET` | `/api/v1/engrams/:id/memory` | 暗号化メモリのダウンロード |
@@ -136,7 +139,7 @@ Engram の詳細ページで `Visibility` バッジから公開設定を **Publi
 - Node.js >= 20
 - PostgreSQL
 - Google OAuth クレデンシャル
-- プロフィール画像アップロードを使う場合は Cloudflare R2 の認証情報
+- アバター画像アップロードを使う場合は Cloudflare R2 の認証情報
 
 ### セットアップ
 
@@ -149,7 +152,8 @@ npx prisma db push
 npm run dev
 ```
 
-現在の実装では、プロフィール画像アップロードに Cloudflare R2 を使います。
+現在の実装では、アバター画像アップロードに Cloudflare R2 を使います。
+これにはプロフィール画像と Engram アバターの両方が含まれます。
 R2 を設定しなくても Mikoshi 自体は動作しますが、アバター画像のアップロード
 API は利用できません。
 

@@ -82,6 +82,7 @@ Open the Engram details page and change the `Visibility` badge to **Public** or 
 ## Features
 
 - **Persona Storage** — Store Engrams with plaintext `SOUL.md` and `IDENTITY.md`
+- **Engram Avatars** — Upload, store, and render per-Engram avatars from `IDENTITY.md` / Relic sync flows
 - **End-to-End Encrypted Memory** — Memory files are encrypted on your device before upload. Mikoshi never sees the plaintext.
 - **Sync Status** — Compare local persona and memory hashes against cloud state
 - **Drift Detection** — Persona overwrites use optimistic concurrency (409 on conflict)
@@ -102,6 +103,8 @@ All endpoints require authentication via Bearer token (API key) or session cooki
 | `PATCH` | `/api/v1/engrams/:id` | Update metadata |
 | `DELETE` | `/api/v1/engrams/:id` | Delete Engram |
 | `POST` | `/api/v1/engrams/:id/clone` | Clone a public/unlisted Engram |
+| `PUT` | `/api/v1/engrams/:id/avatar` | Upload or replace an Engram avatar |
+| `DELETE` | `/api/v1/engrams/:id/avatar` | Remove an Engram avatar |
 | `PUT` | `/api/v1/engrams/:id/persona` | Replace persona files (drift detection) |
 | `PUT` | `/api/v1/engrams/:id/memory` | Upload encrypted memory bundle |
 | `GET` | `/api/v1/engrams/:id/memory` | Download encrypted memory bundle |
@@ -137,7 +140,7 @@ If you want to run your own Mikoshi instance:
 - Node.js >= 20
 - PostgreSQL
 - Google OAuth credentials
-- Cloudflare R2 credentials if you want profile avatar uploads
+- Cloudflare R2 credentials if you want avatar uploads
 
 ### Setup
 
@@ -150,7 +153,8 @@ npx prisma db push
 npm run dev
 ```
 
-Profile avatar uploads use Cloudflare R2 in the current implementation.
+Avatar uploads use Cloudflare R2 in the current implementation.
+This includes both user profile avatars and Engram avatars.
 If R2 is not configured, the rest of Mikoshi still works, but avatar upload
 endpoints remain unavailable.
 
